@@ -30,6 +30,41 @@ def home():
 def health():
     return jsonify(status="ok")
 
+@bp.post("/api/contact")
+def direct_contact():
+    # JSON-only requests cannot be submitted by a cross-origin HTML form.
+    if not request.is_json:
+        return jsonify(error="Please submit the form with JavaScript enabled."), 415
+    retry_after = check_rate_limit("contact:" + (request.remote_addr or "unknown"), 5, 600)
+    if retry_after:
+        response = jsonify(error="Please wait a few minutes before sending another message.")
+        response.status_code = 429
+        response.headers["Retry-After"] = str(retry_after)
+        return response
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify(error="Please provide your name, email and message."), 400
+    fields = {}
+    for key, limit in (("name", 120), ("email", 254), ("message", 4000)):
+        value = data.get(key)
+        if not isinstance(value, str) or not value.strip() or len(value) > limit:
+            return jsonify(error=f"Please enter a valid {key} (maximum {limit} characters)."), 400
+        fields[key] = value.strip()
+    if not re.fullmatch(r"[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+", fields["email"]):
+        return jsonify(error="Please enter a valid email address."), 400
+    try:
+        with connect(current_app.config["DATABASE_PATH"]) as db:
+            conversation_id = str(uuid.uuid4())
+            ensure_conversation(db, conversation_id)
+            upsert_lead(db, conversation_id, {
+                "name": fields["name"], "email": fields["email"], "description": fields["message"],
+            })
+            add_message(db, conversation_id, "user", fields["message"])
+    except Exception:
+        current_app.logger.exception("Unable to save direct contact enquiry")
+        return jsonify(error="We couldn't save your message. Please try again."), 500
+    return jsonify(message="Thank you. Your message has been received."), 201
+
 @bp.post("/api/chat")
 def chat():
     retry_after = check_rate_limit(

@@ -177,17 +177,28 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
 .project-section { display: grid; grid-template-columns: .78fr 1.22fr; align-items: start; gap: clamp(42px, 8vw, 110px); padding-block: 112px 120px; }
 .project-intro { position: sticky; top: 120px; }
 .project-intro h2 { margin: 0; font-size: clamp(46px, 6.4vw, 80px); font-weight: 450; letter-spacing: -.075em; line-height: .96; }
-.project-intro > p:last-child { max-width: 270px; margin: 21px 0 0; color: var(--silver); font: 17px/1.55 var(--serif); }
+.project-intro > p:not(.eyebrow) { max-width: 270px; margin: 21px 0 0; color: var(--silver); font: 17px/1.55 var(--serif); }
+.direct-contact { display: grid; width: 100%; margin-top: 42px; }
+.direct-contact label { margin-top: 22px; color: var(--muted); font-size: 9px; letter-spacing: .18em; }
+.direct-contact label:first-child { margin-top: 0; }
+.direct-contact input, .direct-contact textarea { width: 100%; min-width: 0; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; color: var(--paper); font: 14px/1.6 var(--sans); }
+.direct-contact textarea { resize: vertical; }
+.direct-contact input::placeholder, .direct-contact textarea::placeholder { color: var(--muted); opacity: 1; }
+.direct-contact input:focus, .direct-contact textarea:focus { outline: none; border-bottom-color: var(--gold-light); }
+.direct-contact button { justify-self: start; display: inline-flex; align-items: center; gap: 20px; min-height: 44px; margin-top: 20px; padding: 0; border: 0; background: transparent; color: var(--gold-light); font-size: 10px; letter-spacing: .16em; cursor: pointer; }
+.direct-contact button:disabled { opacity: .6; cursor: wait; }
+.direct-contact-status { margin: 12px 0 0; color: var(--silver); font-size: 12px; line-height: 1.6; }
+.direct-contact-status:empty { display: none; }
 .conversation { min-width: 0; padding: clamp(26px, 3.8vw, 46px); border: 1px solid rgba(238,234,225,.1); background: linear-gradient(145deg, rgba(22,23,24,.94), rgba(13,14,15,.94)); box-shadow: 0 28px 80px rgba(0,0,0,.19); }
 .conversation-heading { text-align: left; }
 .conversation-brand { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 22px; color: #d6d4ce; font-size: 8px; letter-spacing: .2em; }
-.brand-symbol { display: grid; width: 22px; height: 22px; place-items: center; border: 1px solid rgba(224,197,142,.5); color: var(--gold-light); font-family: var(--serif); font-size: 14px; }
+.brand-symbol { display: block; width: 22px; height: 22px; object-fit: contain; opacity: 1; filter: none; }
 .conversation-heading h3 { margin: 0; font: 400 clamp(25px, 2.8vw, 35px)/1.2 var(--serif); letter-spacing: -.025em; }
 .conversation-heading > p:last-child { margin: 8px 0 0; color: #aaa8a2; font-size: 12px; }
 .quick-starts { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 16px; }
 .quick-starts button { min-height: 42px; padding: 9px 13px; border: 1px solid rgba(240,236,225,.2); background: transparent; color: #dedbd4; cursor: pointer; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; transition: border-color .2s ease, color .2s ease, background .2s ease; }
 .quick-starts button:hover { border-color: var(--gold); background: rgba(196,163,107,.08); color: var(--gold-light); }
-.conversation-window { min-height: 130px; max-height: 290px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding: 17px 0 13px; border-top: 1px solid rgba(255,255,255,.09); scrollbar-color: #6f5d3d transparent; scrollbar-width: thin; }
+.conversation-window { min-height: 90px; max-height: 290px; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 12px; padding: 17px 0 13px; border-top: 1px solid rgba(255,255,255,.09); scrollbar-color: #6f5d3d transparent; scrollbar-width: thin; }
 .message { display: flex; max-width: 92%; }
 .message.assistant { align-self: flex-start; }
 .message.user { align-self: flex-end; justify-content: flex-end; }
@@ -209,16 +220,21 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
 .composer button:disabled { cursor: wait; opacity: .6; }
 .conversation-note { margin: 11px 0 0; color: #898781; font-size: 9px; text-align: left; letter-spacing: .04em; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-.site-footer { min-height: 112px; display: flex; justify-content: space-between; align-items: center; gap: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9px; }
+.site-footer { position: relative; min-height: 112px; display: flex; justify-content: space-between; align-items: center; gap: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: 9px; }
 .footer-brand { color: var(--paper); font-size: 11px; letter-spacing: .18em; text-decoration: none; }
 .footer-brand span { display: block; margin-top: 4px; color: var(--muted); font-size: 7px; letter-spacing: .24em; }
-.footer-links { display: flex; gap: 25px; }
+.footer-links { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; }
+.footer-links a { width: 44px; justify-content: center; }
+.footer-links svg { display: block; width: 22px; height: 22px; }
 .footer-links a, .footer-start { min-height: 44px; display: inline-flex; align-items: center; color: #b8b5ad; text-decoration: none; }
 .footer-links a:hover, .footer-start:hover { color: var(--gold-light); }
 .footer-start { gap: 12px; color: var(--gold-light); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; }
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
 .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
+@media (min-width: 761px) {
+  .project-section > .conversation { margin-top: -12px; }
+}
 @media (max-width: 1000px) {
   .site-header, .section-shell { width: min(var(--page-width), calc(100% - 56px)); }
   .portfolio-grid { gap: 28px 16px; }
@@ -304,13 +320,13 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
   .conversation-heading h3 { font-size: 27px; }
   .quick-starts { gap: 7px; margin: 17px 0 13px; }
   .quick-starts button { min-height: 42px; padding-inline: 10px; font-size: 8px; }
-  .conversation-window { min-height: 112px; max-height: 240px; padding-top: 14px; }
+  .conversation-window { min-height: 84px; max-height: 240px; padding-top: 14px; }
   .bubble { font-size: 13px; }
   .composer { min-height: 59px; padding-left: 12px; }
   .site-footer { min-height: 150px; display: grid; grid-template-columns: 1fr auto; gap: 5px 12px; padding-block: 20px; }
   .footer-brand { grid-column: 1; grid-row: 1; }
   .footer-start { grid-column: 2; grid-row: 1; }
-  .footer-links { grid-column: 1 / -1; grid-row: 2; gap: 20px; }
+  .footer-links { position: static; transform: none; grid-column: 1 / -1; grid-row: 2; justify-self: center; gap: 20px; }
 }
 @media (max-width: 380px) {
   .site-header, .section-shell { width: calc(100% - 30px); }
@@ -722,108 +738,11 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
   to { transform: translate3d(0, 0, 0); }
 }
 
-/* =========================================================
-   MASTERMENT PORTFOLIO — UNIFORM VIDEO GRID SPACING
-   Reel-to-Reel gap = Reel-to-Music-Video gap
-   ========================================================= */
-
-:root {
-    --masterment-portfolio-gap: 8px;
-}
-
-/* Remove extra vertical spacing inside portfolio groups */
-.portfolio-grid,
-.portfolio-media-grid,
-.media-grid,
-.reels-grid,
-.reel-row {
-    gap: var(--masterment-portfolio-gap) !important;
-    row-gap: var(--masterment-portfolio-gap) !important;
-    column-gap: var(--masterment-portfolio-gap) !important;
-}
-
-/* Keep each 3-reel row using the exact same gap */
-.reel-row,
-.reels-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-/* Remove extra space around official videos */
-.portfolio-grid .official-video,
-.portfolio-media-grid .official-video,
-.media-grid .official-video {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* Remove extra spacing between portfolio groups */
-.portfolio-group,
-.media-group,
-.reel-video-group {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    gap: var(--masterment-portfolio-gap) !important;
-}
-
-/* Mobile: same exact internal gap */
-@media (max-width: 600px) {
-    .portfolio-grid,
-    .portfolio-media-grid,
-    .media-grid,
-    .reels-grid,
-    .reel-row,
-    .portfolio-group,
-    .media-group,
-    .reel-video-group {
-        gap: var(--masterment-portfolio-gap) !important;
-        row-gap: var(--masterment-portfolio-gap) !important;
-        column-gap: var(--masterment-portfolio-gap) !important;
-    }
-}
-
-
-/* MASTERMENT — exact equal portfolio spacing */
-.portfolio-grid {
-    --portfolio-gap: 8px !important;
-    gap: var(--portfolio-gap) !important;
-    row-gap: var(--portfolio-gap) !important;
-}
-
-.reels-gallery {
-    gap: var(--portfolio-gap) !important;
-    column-gap: var(--portfolio-gap) !important;
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
+/* One shared value for every internal portfolio row and column. */
+.portfolio-grid { --portfolio-gap: 8px; gap: var(--portfolio-gap); }
+.portfolio-grid > .reels-gallery { gap: var(--portfolio-gap); }
 .portfolio-grid > .reels-gallery,
-.portfolio-grid > .portfolio-card {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-@media (max-width: 600px) {
-    .portfolio-grid {
-        gap: var(--portfolio-gap) !important;
-        row-gap: var(--portfolio-gap) !important;
-    }
-
-    .reels-gallery {
-        gap: var(--portfolio-gap) !important;
-        column-gap: var(--portfolio-gap) !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-
-    .portfolio-grid > .portfolio-card {
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-}
-
+.portfolio-grid > .portfolio-card { margin: 0; padding: 0; }
 
 /* MASTERMENT — Work background same as About */
 .work-section {
@@ -842,3 +761,8 @@ button:focus-visible, a:focus-visible, textarea:focus-visible { outline: 2px sol
     background-color: #fafaf7 !important;
 }
 
+
+/* Website credit below the unchanged main footer row. */
+.footer-credit { margin: 0; padding: 8px 0 28px; color: var(--muted); font-size: 8px; font-weight: 400; line-height: 1.8; letter-spacing: .12em; text-align: center; }
+.footer-credit a { display: inline-block; padding-block: 6px; text-decoration: none; white-space: nowrap; transition: color .25s ease; }
+.footer-credit a:hover { color: var(--gold-light); }

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,6 +9,7 @@
   <link rel="preload" as="image" href="{{ url_for('static', filename='images/masterment-logo.png') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='about-final-copy-20260928') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='reels.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='chat-widget.css') }}">
 </head>
 <body class="customer-site">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -53,7 +54,7 @@
     <section class="work-section section-shell" id="work" aria-labelledby="work-title">
       <div class="section-heading reveal">
         <div><p class="eyebrow">SELECTED WORK</p><h2 id="work-title">MADE TO BE <em>SEEN.</em></h2></div>
-        <p>A selection of Masterment creative production.</p>
+        <p>A selection of Masterment creative agency.</p>
       </div>
       <div class="portfolio-grid">
         <div class="reels-gallery" aria-label="Reels 1?3">
@@ -83,15 +84,6 @@
           </div>
           {% endfor %}
         </div>
-        <article class="portfolio-card portfolio-connection reveal">
-          <div class="portfolio-art art-two">
-            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="CICATRIZ — Lyo">
-              <source data-src="{{ url_for('static', filename='videos/work/work-02.mp4') }}" type="video/mp4">
-              Your browser does not support HTML5 video.
-            </video>
-            <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>
-          </div>
-        </article>
         <div class="reels-gallery" aria-label="Reels 7?9">
           {% for number in range(7, 10) %}
           <div class="reels-frame">
@@ -115,6 +107,21 @@
 
 
 
+    <section class="disciplines-section section-shell" id="services" aria-labelledby="services-title">
+      <div class="disciplines-intro reveal">
+        <p class="eyebrow">OUR SERVICES</p>
+        <h2 id="services-title">ONE VISION.<br><em>MANY FORMS.</em></h2>
+      </div>
+      <ol class="discipline-list reveal">
+        <li><span>01</span><h3>VIDEO PRODUCTION</h3></li>
+        <li><span>02</span><h3>PHOTOGRAPHY</h3></li>
+        <li><span>03</span><h3>CREATIVE DIRECTION</h3></li>
+        <li><span>04</span><h3>BRANDING &amp; DESIGN</h3></li>
+        <li><span>05</span><h3>WEB &amp; DIGITAL DEVELOPMENT</h3></li>
+        <li><span>06</span><h3>ARTIST &amp; MUSIC SERVICES</h3></li>
+      </ol>
+    </section>
+
     <section class="about-section section-shell" id="about" aria-labelledby="about-title">
       <div class="about-editorial reveal">
         <div class="about-topline">
@@ -133,7 +140,7 @@
             </div>
           </div>
           <div class="about-story">
-            <p>Masterment is a licensed Limited Liability Company (LLC) that began through music and video collaborations with artists, later growing into a creative network connecting artists, filmmakers, dancers, producers, event teams, and brands. With an official YouTube channel and artist presence across Spotify, YouTube, and Apple Music, our creative roots continue to shape everything we do. Wherever your vision takes you, Masterment connects you with the right creatives to make it happen.</p>
+            <p>Masterment is a licensed Limited Liability Company (LLC) that began through music and video collaborations with artists, later growing into a creative network connecting artists, filmmakers, dancers, producers, event teams, and brands. With an official YouTube channel and music distributed across major streaming platforms worldwide, our creative roots continue to shape everything we do. Wherever your vision takes you, Masterment connects you with the right creatives to make it happen.</p>
           </div>
         </div>
         <div class="about-expansion" aria-label="Our partners">
@@ -145,17 +152,54 @@
       </div>
     </section>
 
-    <section class="project-section section-shell" id="contact" aria-labelledby="conversation-title">
+    <section class="project-section section-shell" id="contact" aria-labelledby="project-title">
       <div class="project-intro reveal">
         <p class="eyebrow">START A PROJECT</p>
         <h2>LET’S CREATE<br><em>SOMETHING.</em></h2>
-        <p>Tell Masterment what you’re looking to create.</p>
+        <p>Tell us what you’re looking to create.</p>
+        <form class="direct-contact" id="direct-contact" action="{{ url_for('main.direct_contact') }}" method="post">
+          <label for="contact-name">NAME</label>
+          <input id="contact-name" name="name" type="text" placeholder="Your name" autocomplete="name" maxlength="120" required>
+          <label for="contact-email">EMAIL</label>
+          <input id="contact-email" name="email" type="email" placeholder="you@email.com" autocomplete="email" maxlength="254" required>
+          <label for="contact-message">MESSAGE</label>
+          <textarea id="contact-message" name="message" placeholder="Write your message here." rows="3" maxlength="4000" required></textarea>
+          <button type="submit">SEND MESSAGE <span aria-hidden="true">↗</span></button>
+          <p class="direct-contact-status" role="status" aria-live="polite"></p>
+        </form>
       </div>
-      <section class="conversation reveal" aria-labelledby="conversation-title">
+
+    </section>
+  </main>
+
+  <footer class="section-shell">
+    <div class="site-footer">
+    <a class="footer-brand" href="#home">MASTERMENT <span>CREATIVE AGENCY</span></a>
+    <div class="footer-links">
+      <a href="https://youtube.com/@masterment?si=gzN1NILQ_nIrluB3" target="_blank" rel="noopener noreferrer" aria-label="Masterment on YouTube (opens in a new tab)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21.6 6.2a3 3 0 0 0-2.1-2.1C17.6 3.6 12 3.6 12 3.6s-5.6 0-7.5.5a3 3 0 0 0-2.1 2.1C1.9 8.1 1.9 12 1.9 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM10 15.6V8.4l6.2 3.6-6.2 3.6Z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/master_ment?stkn=MXV5OGQxeTFmajA0Yw==" target="_blank" rel="noopener noreferrer" aria-label="Masterment on Instagram (opens in a new tab)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a href="https://open.spotify.com/artist/1JDtKFhM3tOV4r0b9w0ApB?si=lFZ-jTNnRzudegky72Ch9w&amp;utm_source=copy-link" target="_blank" rel="noopener noreferrer" aria-label="Masterment on Spotify (opens in a new tab)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M6.5 9c3.5-1.1 7.8-.8 11 1M7.2 12.2c3-.9 6.4-.6 9.1.9M8 15.3c2.5-.6 5.1-.4 7.4.8"/></svg>
+      </a>
+      <a href="https://music.apple.com/us/artist/masterment/1650869578" target="_blank" rel="noopener noreferrer" aria-label="Masterment on Apple Music (opens in a new tab)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path fill="currentColor" d="M17.3 5.5v10.3c0 1.3-1.1 2.2-2.5 2.2-1.1 0-1.8-.6-1.8-1.5 0-1.2 1.2-1.9 2.8-1.9V9l-6 1.3v6.8c0 1.3-1.1 2.2-2.5 2.2-1.1 0-1.8-.6-1.8-1.5 0-1.2 1.2-1.9 2.8-1.9V7.4l9-1.9Z"/></svg>
+      </a>
+    </div>
+    <a class="footer-start" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
+    </div>
+    <p class="footer-credit">DESIGNED &amp; DEVELOPED BY <a href="https://www.instagram.com/kriolspirit/" target="_blank" rel="noopener noreferrer">KRIOLSPIRIT <span aria-hidden="true">&#8599;</span></a></p>
+  </footer>
+  <div class="chat-widget" id="chat-widget">
+      <section class="conversation" id="chat-panel" role="dialog" hidden tabindex="-1" aria-labelledby="conversation-title">
         <div class="conversation-heading">
-          <div class="conversation-brand"><span class="brand-symbol" aria-hidden="true">M</span><span>MASTERMENT</span></div>
+          <button class="chat-close" type="button" aria-label="Minimize chat">&times;</button>
+          <div class="conversation-brand"><img class="brand-symbol" src="{{ url_for('static', filename='images/masterment-logo.png') }}" width="22" height="22" alt="" aria-hidden="true"><span>MASTERMENT</span></div>
           <h3 id="conversation-title">Welcome to Masterment.</h3>
-          <p>Tell us about what you’re looking to create.</p>
+          <p>Tell us about what you're looking to create.</p>
         </div>
         <div class="quick-starts" role="group" aria-label="Choose a project type">
           <button type="button" data-prompt="I'm interested in a music video.">Music Video</button>
@@ -165,32 +209,29 @@
           <button type="button" data-prompt="I have another creative project in mind.">Other</button>
         </div>
         <div class="conversation-window" id="messages" aria-label="Conversation" aria-live="polite" aria-relevant="additions">
-          <article class="message assistant"><div class="bubble">Welcome to Masterment. Tell us a little about what you’d like to create.</div></article>
+          <article class="message assistant"><div class="bubble">What would you like to create?</div></article>
         </div>
         <div class="typing" id="typing" aria-live="polite" aria-label="Masterment is responding">
           <span></span><span></span><span></span><small>One moment</small>
         </div>
         <form id="chat-form" class="composer">
           <label class="sr-only" for="chat-input">Tell us about your project</label>
-          <textarea id="chat-input" rows="1" maxlength="4000" placeholder="Tell us what you have in mind…" required></textarea>
+          <textarea id="chat-input" rows="1" maxlength="4000" placeholder="Tell us what you have in mind..." required></textarea>
           <button type="submit" aria-label="Send message"><span aria-hidden="true">↑</span></button>
         </form>
-        <p class="conversation-note">Your project details are shared with the Masterment team.</p>
+        <p class="conversation-note">Your message will be shared with the Masterment team.</p>
       </section>
-    </section>
-  </main>
-
-  <footer class="site-footer section-shell">
-    <a class="footer-brand" href="#home">MASTERMENT <span>CREATIVE PRODUCTION</span></a>
-    <div class="footer-links">
-      <a href="https://www.youtube.com/@masterment" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
-      <a href="https://www.instagram.com/kriolspirit/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
-    </div>
-    <a class="footer-start" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
-  </footer>
+    <button class="chat-toggle" type="button" aria-controls="chat-panel" aria-expanded="false" aria-label="Open Masterment chat">
+      <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="" aria-hidden="true">
+      <svg class="chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+  </div>
   <script src="{{ url_for('static', filename='chat.js') }}" defer></script>
   <script src="{{ url_for('static', filename='customer.js') }}" defer></script>
   <script src="{{ url_for('static', filename='reels.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='contact.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='chat-widget.js') }}" defer></script>
 </body>
 </html>
+
 
