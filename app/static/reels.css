@@ -1,0 +1,7 @@
+.portfolio-grid > .portfolio-card, .portfolio-grid > .reels-gallery { grid-column: 1 / -1; }
+.reels-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.reels-frame { aspect-ratio: 9 / 16; overflow: hidden; background: #111214; }
+.reels-video { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 760px) {
+  .reels-gallery { gap: 12px; }
+}

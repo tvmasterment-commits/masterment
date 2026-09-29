@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090a0b">
+  <meta name="description" content="Masterment is a creative production company working across music, film, photography, events, culture and visual identity.">
+  <title>MASTERMENT | Creative Production</title>
+  <link rel="preload" as="image" href="{{ url_for('static', filename='images/masterment-logo.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='about-final-copy-20260928') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='reels.css') }}">
+</head>
+<body class="customer-site">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Masterment home">
+      <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="Masterment Creative Production">
+    </a>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+      <span></span><span></span>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="#work">Work</a>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a class="nav-contact" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <section class="hero section-shell" id="home" aria-labelledby="hero-title">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+        <source src="{{ url_for('static', filename='videos/hero-showreel.mp4') }}" type="video/mp4">
+      </video>
+      <div class="hero-video-overlay" aria-hidden="true"></div>
+      <div class="hero-content">
+        <div class="hero-copy reveal">
+          <p class="hero-brandline">MASTERMENT</p>
+          <p class="eyebrow"><span></span> CREATIVE AGENCY</p>
+          <h1 id="hero-title">BRING YOUR<br>VISION <em>TO LIFE.</em></h1>
+          <dl class="hero-categories" aria-label="Creative agency disciplines">
+            <div class="hero-category"><dt>MUSIC &amp; ARTISTS</dt></div>
+            <div class="hero-category"><dt>BRANDS &amp; BUSINESS</dt></div>
+            <div class="hero-category"><dt>EVENTS &amp; CULTURE</dt></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+    <div class="hero-index-band">
+      <div class="hero-index section-shell" aria-hidden="true"><span>01</span><i></i><span>MASTERMENT</span></div>
+    </div>
+
+    <section class="work-section section-shell" id="work" aria-labelledby="work-title">
+      <div class="section-heading reveal">
+        <div><p class="eyebrow">SELECTED WORK</p><h2 id="work-title">MADE TO BE <em>SEEN.</em></h2></div>
+        <p>A selection of Masterment creative production.</p>
+      </div>
+      <div class="portfolio-grid">
+        <div class="reels-gallery" aria-label="Reels 1?3">
+          {% for number in range(1, 4) %}
+          <div class="reels-frame">
+            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            </video>
+          </div>
+          {% endfor %}
+        </div>
+        <article class="portfolio-card portfolio-memories reveal">
+          <div class="portfolio-art art-one">
+            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="BALA — Giiio, Priest, Ashley, Raff Luke">
+              <source data-src="{{ url_for('static', filename='videos/work/work-01.mp4') }}" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+            <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>
+          </div>
+        </article>
+        <div class="reels-gallery" aria-label="Reels 4?6">
+          {% for number in range(4, 7) %}
+          <div class="reels-frame">
+            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            </video>
+          </div>
+          {% endfor %}
+        </div>
+        <article class="portfolio-card portfolio-connection reveal">
+          <div class="portfolio-art art-two">
+            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="CICATRIZ — Lyo">
+              <source data-src="{{ url_for('static', filename='videos/work/work-02.mp4') }}" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+            <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>
+          </div>
+        </article>
+        <div class="reels-gallery" aria-label="Reels 7?9">
+          {% for number in range(7, 10) %}
+          <div class="reels-frame">
+            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            </video>
+          </div>
+          {% endfor %}
+        </div>
+        <article class="portfolio-card portfolio-bala reveal">
+          <div class="portfolio-art art-three">
+            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="MEMORIES #1 — Raff Luke, RhymesK, XA">
+              <source data-src="{{ url_for('static', filename='videos/work/work-03.mp4') }}" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+            <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="disciplines-section section-shell" id="services" aria-labelledby="services-title">
+      <div class="disciplines-intro reveal">
+        <p class="eyebrow">THE MASTERMENT UNIVERSE</p>
+        <h2 id="services-title">ONE VISION.<br><em>MANY FORMS.</em></h2>
+      </div>
+      <ol class="discipline-list reveal">
+        <li><span>01</span><h3>MUSIC &amp; ARTISTS</h3></li>
+        <li><span>02</span><h3>EVENTS &amp; CULTURE</h3></li>
+        <li><span>03</span><h3>FILM &amp; VISUALS</h3></li>
+      </ol>
+    </section>
+
+    <section class="shortform-section section-shell" aria-labelledby="shortform-title">
+      <p class="eyebrow reveal">SHORT-FORM WORK</p>
+      <div class="shortform-main reveal">
+        <h2 id="shortform-title">SHORT-FORM.<br>CULTURE.<br><em>MOTION.</em></h2>
+        <div class="shortform-aside">
+        <p>Visual work moving through culture and motion.</p>
+          <a class="text-link" href="https://www.instagram.com/kriolspirit/" target="_blank" rel="noopener noreferrer">Explore @kriolspirit <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="shortform-rule" aria-hidden="true"><span></span></div>
+    </section>
+
+    <section class="about-section section-shell" id="about" aria-labelledby="about-title">
+      <div class="about-editorial reveal">
+        <div class="about-topline">
+          <p>ABOUT MASTERMENT</p>
+          <div class="about-index">02<span aria-hidden="true"></span></div>
+        </div>
+        <div class="about-story-row">
+          <div class="about-composition">
+            <h2 class="about-headline" id="about-title">
+              <span>BUILT</span>
+              <span>FROM</span>
+              <span class="about-headline-accent">MUSIC.</span>
+            </h2>
+            <div class="about-logo">
+              <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="Masterment">
+            </div>
+          </div>
+          <div class="about-story">
+            <p>Masterment is a licensed Limited Liability Company (LLC) that began through music and video collaborations with artists, later growing into a creative network connecting artists, filmmakers, dancers, producers, event teams, and brands. With an official YouTube channel and artist presence across Spotify, YouTube, and Apple Music, our creative roots continue to shape everything we do. Wherever your vision takes you, Masterment connects you with the right creatives to make it happen.</p>
+          </div>
+        </div>
+        <div class="about-expansion" aria-label="Our partners">
+          <p class="about-partners-label">OUR PARTNERS:</p>
+        </div>
+        <div class="about-partner-marquee" aria-label="Partner logos" hidden>
+          <div class="about-partner-track"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-section section-shell" id="contact" aria-labelledby="conversation-title">
+      <div class="project-intro reveal">
+        <p class="eyebrow">START A PROJECT</p>
+        <h2>LET’S CREATE<br><em>SOMETHING.</em></h2>
+        <p>Tell Masterment what you’re looking to create.</p>
+      </div>
+      <section class="conversation reveal" aria-labelledby="conversation-title">
+        <div class="conversation-heading">
+          <div class="conversation-brand"><span class="brand-symbol" aria-hidden="true">M</span><span>MASTERMENT</span></div>
+          <h3 id="conversation-title">Welcome to Masterment.</h3>
+          <p>Tell us about what you’re looking to create.</p>
+        </div>
+        <div class="quick-starts" role="group" aria-label="Choose a project type">
+          <button type="button" data-prompt="I'm interested in a music video.">Music Video</button>
+          <button type="button" data-prompt="I'm looking for photography.">Photography</button>
+          <button type="button" data-prompt="I need coverage for an event.">Event</button>
+          <button type="button" data-prompt="I'm exploring a commercial production.">Commercial</button>
+          <button type="button" data-prompt="I have another creative project in mind.">Other</button>
+        </div>
+        <div class="conversation-window" id="messages" aria-label="Conversation" aria-live="polite" aria-relevant="additions">
+          <article class="message assistant"><div class="bubble">Welcome to Masterment. Tell us a little about what you’d like to create.</div></article>
+        </div>
+        <div class="typing" id="typing" aria-live="polite" aria-label="Masterment is responding">
+          <span></span><span></span><span></span><small>One moment</small>
+        </div>
+        <form id="chat-form" class="composer">
+          <label class="sr-only" for="chat-input">Tell us about your project</label>
+          <textarea id="chat-input" rows="1" maxlength="4000" placeholder="Tell us what you have in mind…" required></textarea>
+          <button type="submit" aria-label="Send message"><span aria-hidden="true">↑</span></button>
+        </form>
+        <p class="conversation-note">Your project details are shared with the Masterment team.</p>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <a class="footer-brand" href="#home">MASTERMENT <span>CREATIVE PRODUCTION</span></a>
+    <div class="footer-links">
+      <a href="https://www.youtube.com/@masterment" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+      <a href="https://www.instagram.com/kriolspirit/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+    </div>
+    <a class="footer-start" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
+  </footer>
+  <script src="{{ url_for('static', filename='chat.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='customer.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='reels.js') }}" defer></script>
+</body>
+</html>

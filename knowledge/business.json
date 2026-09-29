@@ -1,0 +1,20 @@
+{
+  "company_name": "Masterment LLC",
+  "assistant_name": "Masterment",
+  "description": "Masterment is a creative production company working across music video, film, photography, events, content and visual identity.",
+  "services": [
+    "Music video production",
+    "Video production",
+    "Photography",
+    "Event coverage",
+    "Creative content production",
+    "Branding and visual creative services"
+  ],
+  "business_hours": "[PLACEHOLDER: Add approved business hours]",
+  "service_area": "[PLACEHOLDER: Add approved service area]",
+  "contact_email": "[PLACEHOLDER: Add approved contact email]",
+  "contact_phone": "[PLACEHOLDER: Add approved contact phone]",
+  "pricing": "[PLACEHOLDER: No approved pricing provided. Do not quote prices; collect the project scope and budget and offer follow-up.]",
+  "booking_policy": "[PLACEHOLDER: Add approved booking, deposit, cancellation, and scheduling policies]",
+  "response_policy": "Do not promise availability or a response time. Collect lead details and explain that the team can follow up to discuss the project."
+}
