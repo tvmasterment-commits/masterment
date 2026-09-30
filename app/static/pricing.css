@@ -1,4 +1,20 @@
 /* Scoped to pricing; existing page and chat styles remain unchanged. */
+.services-pricing-trigger { display: block; width: min(100%, 300px); margin-top: 30px; padding: 19px 21px; border: 1px solid rgba(196,163,107,.35); background: rgba(196,163,107,.035); color: var(--paper); text-align: left; cursor: pointer; transition: border-color .2s ease, background .2s ease, color .2s ease; }
+.services-pricing-label { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 11px; letter-spacing: .18em; }
+.services-pricing-icon { color: var(--gold); font-size: 20px; line-height: 1; transition: transform .2s ease; }
+.services-pricing-caption { display: block; margin-top: 8px; color: var(--silver); font-size: 11px; letter-spacing: .015em; }
+.services-pricing-trigger:hover, .services-pricing-trigger:focus-visible { border-color: var(--gold-light); background: rgba(196,163,107,.075); color: var(--gold-light); }
+.services-pricing-trigger:hover .services-pricing-icon { transform: translate(1px, -1px); }
+@media (max-width: 760px) {
+  #services .disciplines-intro { display: contents; }
+  #services .disciplines-heading { grid-row: 1; }
+  #services .discipline-list { grid-row: 2; }
+  #services .services-pricing-trigger { grid-row: 3; width: 100%; margin-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .services-pricing-trigger, .services-pricing-icon { transition: none; }
+  .services-pricing-trigger:hover .services-pricing-icon { transform: none; }
+}
 .site-nav .pricing-trigger { display: inline-flex; align-items: center; min-height: 44px; padding: 0; border: 0; background: none; color: #cac8c2; font: 400 10px var(--sans); letter-spacing: .15em; cursor: pointer; }
 .site-nav .pricing-trigger:hover { color: var(--paper); }
 .pricing-dialog { width: min(1160px, calc(100% - 64px)); max-width: none; height: min(900px, calc(100dvh - 64px)); max-height: none; margin: auto; padding: 0; border: 1px solid rgba(196,163,107,.32); background: #101112; color: var(--paper); box-shadow: 0 32px 120px #0009; overflow: hidden; }

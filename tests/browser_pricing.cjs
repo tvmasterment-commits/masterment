@@ -34,6 +34,27 @@ const assert = require('node:assert/strict');
       await page.route('**/static/videos/**', route => {mediaRequests++; return route.abort();});
       await page.goto('http://127.0.0.1:5057/', {waitUntil: 'networkidle'});
       const chatBefore = await page.locator('.chat-toggle').boundingBox();
+      await page.locator('#services').scrollIntoViewIfNeeded();
+      const heading = await page.locator('#services-title').boundingBox();
+      const serviceList = await page.locator('#services .discipline-list').boundingBox();
+      const serviceTrigger = await page.locator('.services-pricing-trigger').boundingBox();
+      assert.equal(await page.locator('#services li').count(), 6);
+      assert.equal(await page.locator('#pricing-dialog').count(), 1);
+      if (width > 760) {
+        assert(Math.abs(serviceTrigger.x - heading.x) < 1);
+        assert(serviceTrigger.y >= heading.y + heading.height);
+        assert(serviceTrigger.y < serviceList.y + serviceList.height);
+        assert(serviceTrigger.x + serviceTrigger.width < serviceList.x);
+      } else {
+        assert(serviceTrigger.y >= serviceList.y + serviceList.height);
+      }
+      await page.screenshot({path: path.join(output, label + '-services.png')});
+      await page.locator('.services-pricing-trigger').click();
+      assert.equal(await page.locator('#pricing-dialog').evaluate(el => el.open), true);
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => document.body.style.position !== 'fixed');
+      assert.equal(await page.locator('.services-pricing-trigger').evaluate(el => el === document.activeElement), true);
+      await page.evaluate(() => window.scrollTo({top: 0, behavior: 'instant'}));
       if (width <= 760) await page.locator('#menu-toggle').click();
       await page.locator('.pricing-trigger').click();
       await page.waitForFunction(() => document.querySelector('#pricing-dialog').open);

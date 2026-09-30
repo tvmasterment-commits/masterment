@@ -1,15 +1,17 @@
 (() => {
   const dialog = document.querySelector('#pricing-dialog');
-  const trigger = document.querySelector('.pricing-trigger');
-  if (!dialog || !trigger) return;
+  const triggers = document.querySelectorAll('.pricing-trigger, .services-pricing-trigger');
+  if (!dialog || !triggers.length) return;
+  let trigger = triggers[0];
   const scroller = dialog.querySelector('.pricing-scroll');
   let savedScroll = 0;
   let savedStyles;
   let afterClose;
   let previousSelection = '';
 
-  function openPricing() {
+  function openPricing(event) {
     if (dialog.open) return;
+    trigger = event.currentTarget;
     savedScroll = window.scrollY;
     savedStyles = ['position', 'top', 'width', 'overflow', 'paddingRight'].map(key => [key, document.body.style[key]]);
     const gutter = window.innerWidth - document.documentElement.clientWidth;
@@ -57,7 +59,7 @@
       first.focus();
     }
   });
-  trigger.addEventListener('click', openPricing);
+  triggers.forEach(button => button.addEventListener('click', openPricing));
   dialog.querySelector('.pricing-close').addEventListener('click', () => closePricing());
   dialog.querySelectorAll('.pricing-index a').forEach(link => link.addEventListener('click', event => {
     event.preventDefault();

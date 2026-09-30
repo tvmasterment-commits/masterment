@@ -35,6 +35,15 @@ class PricingTest(unittest.TestCase):
         self.assertEqual(self.page.count('<dialog '), 1)
         self.assertEqual(self.page.count('VIEW DETAILS'), 3)
 
+    def test_services_trigger_reuses_modal_and_preserves_list(self):
+        section = re.search(r'<section class="disciplines-section.*?</section>', self.page, re.S).group()
+        self.assertIn('class="services-pricing-trigger" type="button" aria-haspopup="dialog" aria-controls="pricing-dialog"', section)
+        self.assertIn('Explore packages &amp; starting rates', section)
+        self.assertEqual(section.count('<li>'), 6)
+        for label in ('VIDEO PRODUCTION', 'PHOTOGRAPHY', 'CREATIVE DIRECTION', 'BRANDING &amp; DESIGN', 'WEB &amp; DIGITAL DEVELOPMENT', 'ARTIST &amp; MUSIC SERVICES'):
+            self.assertIn(f'<h3>{label}</h3>', section)
+        self.assertEqual(self.page.count('id="pricing-dialog"'), 1)
+
     def test_all_prices_match_shared_chat_source(self):
         for section in pricing_view(self.knowledge):
             for offer in section['offers']:
