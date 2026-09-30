@@ -26,6 +26,12 @@ Set these values in `.env` for local use:
 
 Replace the placeholders in `knowledge/business.json` with approved company information. Never put actual credentials in `.env.example` or source control. `.env` is gitignored.
 
+The approved service catalog, prices, exclusions, network policies, and sales guidance are centralized in `knowledge/business.json`. `business_knowledge` contains the approved sections; `catalog` maps inquiry patterns, exact price headings, and relevant intake questions to those sections. `responses` contains the approved no-key response wording. Keep price headings consistent with the catalog when editing and run the complete test suite. Prices are read from the approved sections, not copied into Python or frontend files.
+
+The model receives the complete knowledge and conversation context. Local checks reject unsupported dollar amounts, lost starting-price qualifiers, and explicit discount/result promises. These checks are deliberately limited; mocked-model tests do not establish the quality of every possible live-model response. When no API key is configured, catalog answers and relevant intake questions remain available. A configured provider failure retains the existing error response and still saves lead details.
+
+Expanded project requirements are stored in the existing lead `description` field, with full conversation history preserved in `messages`. No database migration, new dependency, or new environment variable is required for the catalog update. Hours, public contact details, and booking policies still need owner-approved values where marked as placeholders.
+
 Start local development with:
 
 ```powershell
@@ -39,6 +45,16 @@ Open the customer experience at http://127.0.0.1:5000/, admin at http://127.0.0.
 ```powershell
 python -m unittest discover -s tests -v
 ```
+
+The Pricing navigation item opens a native dialog rendered from the same approved knowledge as the chatbot. Presentation text lives in `public_pricing`; monetary values and monthly inclusions are read through the shared `offer_data` parser. No separate public pricing database is maintained. Package selection prefills the existing contact message, preserving the visitor's draft; it does not create or submit a lead until the existing form is submitted. If the combined text would exceed the form's existing limit, the draft is preserved without adding the selection.
+
+Optional browser regression checks use Playwright as a development tool and an installed Chrome executable:
+
+```powershell
+node tests/browser_pricing.cjs
+```
+
+If Playwright is installed outside this project, set `NODE_PATH` to that installation's `node_modules` directory. `PYTHON` and `CHROME_PATH` can override the test executable paths. The test starts its own loopback-only Flask server on port 5057, uses an isolated database, and saves screenshots/results under ignored `.pricing-verification/`. It checks desktop, tablet, and two mobile viewport sizes, navigation, details, focus, scrolling, package handoff, local form submission, and the existing chatbot. There is no new runtime dependency.
 
 ## Production start
 

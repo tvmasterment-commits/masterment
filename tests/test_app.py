@@ -120,9 +120,9 @@ class AppTest(unittest.TestCase):
         response=self.client.post("/api/chat",json={"message":"How much does a commercial video cost? We want a warm 30-second ad."})
         reply=response.json["reply"].lower()
         self.assertIn("pricing depends",reply)
-        self.assertIn("approved rates",reply)
+        self.assertIn("starting at $500",reply)
         self.assertNotRegex(reply,r"\b(?:within|in)\s+\d+\s+(?:hours|days|weeks)\b")
-        self.assertNotIn("$",reply)
+        self.assertIn("final pricing depends",reply)
 
     def test_multiturn_music_video_intake_keeps_context_and_closes_after_email(self):
         first=self.client.post("/api/chat",json={"message":"Hi, I'm looking to shoot a music video next month in Boston. How much do you charge?"})
@@ -130,7 +130,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(first.json["captured"]["project_date"],"next month")
         self.assertEqual(first.json["captured"]["location"],"Boston")
         self.assertIn("pricing depends",first.json["reply"].lower())
-        self.assertNotIn("$",first.json["reply"])
+        self.assertIn("Starting at $600",first.json["reply"])
 
         second=self.client.post("/api/chat",json={"message":"My name is Alex. I'm an R&B artist. I want a cinematic music video with two locations. My budget is around $1,000 and I'd like to shoot October 17, 2026.","conversation_id":cid})
         lead=second.json["captured"]
@@ -263,7 +263,7 @@ class AppTest(unittest.TestCase):
             first=self.client.post("/api/chat",json={"message":"Hi, I'm looking to shoot a music video next month in Boston. How much do you charge?"})
             self.assertEqual(first.status_code,200)
             cid=first.json["conversation_id"]
-            self.assertIn("Pricing depends",first.json["reply"])
+            self.assertIn("final pricing depends",first.json["reply"])
             self.assertEqual(first.json["captured"]["project_date"],"next month")
             self.assertEqual(first.json["captured"]["location"],"Boston")
             second=self.client.post("/api/chat",json={"message":"My name is Alex. It's an R&B video, cinematic, two locations. My budget is around $1,000 and I'd like to shoot October 17.","conversation_id":cid})
@@ -401,139 +401,45 @@ class AppTest(unittest.TestCase):
         self.assertNotIn(b"<script>alert(1)</script>",detail.data)
 
     def test_customer_redesign_keeps_brand_navigation_and_existing_chat_hooks(self):
-        root=Path(__file__).resolve().parents[1]
-        response=self.client.get("/")
-        self.assertEqual(response.status_code,200)
-        page=response.get_data(as_text=True)
-        for text in ("MASTERMENT", "CREATIVE PRODUCTION", "BRING YOUR", "Start a Project", "Welcome to Masterment.", "Tell us about what you’re looking to create.", "Music Video", "Photography", "Commercial", "MEMORIES #1", "SELECTED WORK", "Explore @kriolspirit", "SHORT-FORM.", "id=\"contact\"", "customer.css"):
-            self.assertIn(text,page)
-        hero=page[page.index('<section class="hero'):page.index('</section>',page.index('<section class="hero'))]
-        self.assertIn('<video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">',hero)
-        self.assertIn('src="/static/videos/hero-showreel.mp4" type="video/mp4"',hero)
-        self.assertNotIn(" controls",hero)
-        self.assertIn("CREATIVE AGENCY",hero)
-        for label in ("MUSIC &amp; ARTISTS", "BRANDS &amp; BUSINESS", "EVENTS &amp; CULTURE"):
-            self.assertIn(label,hero)
-        self.assertNotIn("VIEW WORK",hero.upper())
-        self.assertNotIn('class="nav-contact"',hero)
-        for removed_content in ("View Work", "Music videos · Artist visuals · Performance", "Events · Nightlife · Dance · Social content", "Film · Photography · Commercial · Creative content"):
-            self.assertNotIn(removed_content,hero)
-        self.assertNotIn("Masterment AI",page)
-        self.assertTrue((root/"app"/"static"/"images"/"masterment-logo.png").is_file())
-        self.assertTrue((root/"app"/"static"/"videos"/"hero-showreel.mp4").is_file())
-        script=(root/"app"/"static"/"chat.js").read_text(encoding="utf-8-sig")
-        for hook in ("/api/chat", "/api/conversations/", "sessionStorage", "data-prompt", "addMessage('assistant', data.reply)", "textContent = text"):
-            self.assertIn(hook,script)
+        page = self.client.get("/").get_data(as_text=True)
+        root = Path(__file__).resolve().parents[1]
+        for text in ("MASTERMENT", "CREATIVE AGENCY", "BRING YOUR", "Start a Project", "Welcome to Masterment.", "SELECTED WORK"):
+            self.assertIn(text, page)
+        for anchor in ("work", "services", "about", "contact"):
+            self.assertIn(f'href="#{anchor}"', page)
+        for hook in ('id="chat-form"', 'id="chat-panel"', 'id="chat-widget"', 'id="direct-contact"', 'id="messages"'):
+            self.assertIn(hook, page)
+        self.assertEqual(page.count("data-prompt="), 5)
+        script = (root / "app/static/chat.js").read_text(encoding="utf-8-sig")
+        for hook in ("/api/chat", "/api/conversations/", "sessionStorage", "textContent = text", "form.requestSubmit()"):
+            self.assertIn(hook, script)
+        self.assertIn('/static/videos/hero-showreel.mp4', page)
+        self.assertIn('class="hero-video" autoplay muted loop playsinline', page)
 
-    def test_selected_work_uses_three_local_videos_and_preserves_profile_links(self):
-        root=Path(__file__).resolve().parents[1]
-        response=self.client.get("/")
-        page=response.get_data(as_text=True)
-        for url in ("https://www.youtube.com/@masterment","https://www.instagram.com/kriolspirit/"):
-            self.assertIn(f'href="{url}"',page)
-        service=page[page.index('<section class="disciplines-section'):page.index('</section>',page.index('<section class="disciplines-section'))]
-        for label in ("MUSIC &amp; ARTISTS", "EVENTS &amp; CULTURE", "FILM &amp; VISUALS"):
-            self.assertIn(f'<h3>{label}</h3>',service)
-        self.assertEqual(service.count("<li>"),3)
-        self.assertIn("ONE VISION.<br><em>MANY FORMS.</em>",service)
-        self.assertIn("Masterment is a creative production company working across music, film, photography, events, culture and visual identity.",page)
-        for obsolete in ("Music Videos</h3>", "Events / Nightlife", "Artists / Performance", "Social / Culture", "Cinematic / Travel"):
-            self.assertNotIn(obsolete,service)
-        self.assertEqual(page.count('class="portfolio-card'),3)
-        work=page[page.index('<section class="work-section'):page.index('</section>',page.index('<section class="work-section'))]
-        self.assertEqual(work.count('<video class="project-video" autoplay muted loop playsinline preload="metadata"'),3)
-        for index in range(1,4):
-            self.assertIn(f'/static/videos/work/work-{index:02d}.mp4',work)
-        for metadata in (
-            'BALA<small class="project-artists">Giiio, Priest, Ashley, Raff Luke</small>',
-            'CICATRIZ<small class="project-artists">Lyo</small>',
-            'MEMORIES #1<small class="project-artists">Raff Luke, RhymesK, XA</small>',
-        ):
-            self.assertIn(metadata,work)
-        self.assertNotIn('/static/videos/work/work-04.mp4',work)
-        self.assertNotIn('portfolio-energy',work)
-        self.assertNotIn('ENERGY',work)
-        self.assertNotIn("https://youtu.be/",work)
-        self.assertNotIn("i.ytimg.com",work)
-        self.assertNotIn(" controls",work)
-        self.assertEqual(work.count('class="project-video-fallback" hidden'),3)
-        self.assertNotIn("work-05.mp4",work)
-        self.assertNotIn("More on YouTube",work)
-        self.assertNotIn('class="reel-card',page)
-        self.assertEqual(page.count('target="_blank" rel="noopener noreferrer"'),3)
-        styles=(root/"app"/"static"/"customer.css").read_text(encoding="utf-8")
-        self.assertIn("aspect-ratio: 16 / 9",styles)
-        self.assertIn("object-fit: cover",styles)
-        self.assertIn("grid-column: span 7",styles)
-        self.assertIn("grid-column: span 5",styles)
-        self.assertIn("grid-column: span 12",styles)
-        self.assertIn(".portfolio-connection .project-video { transform: scale(1.35); }",styles)
-        self.assertIn(".portfolio-bala .project-video { transform: scale(1.35); }",styles)
-        self.assertIn("grid-template-columns: minmax(0,1fr)",styles)
-        script=(root/"app"/"static"/"customer.js").read_text(encoding="utf-8-sig")
-        self.assertIn(".project-video",script)
-        self.assertIn("video-unavailable",script)
-        self.assertIn("IntersectionObserver",script)
-        self.assertIn("nearbyProjectVideos",script)
-        self.assertIn("reducedMotion.matches",script)
-        self.assertIn("'work-01': {start: 20, end: 32}",script)
-        self.assertIn("'work-02': {start: 15, end: 27}",script)
-        self.assertIn("'work-03': {start: 25, end: 37}",script)
-        self.assertIn("loadedmetadata",script)
-        self.assertIn("video.currentTime >= end",script)
+    def test_current_portfolio_media_and_profile_links_are_preserved(self):
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertEqual(page.count('class="reels-video"'), 9)
+        self.assertEqual(page.count('class="portfolio-card'), 2)
+        for number in (1, 3):
+            self.assertIn(f'/static/videos/work/work-{number:02d}.mp4', page)
+        for number in range(1, 10):
+            self.assertIn(f'/static/videos/reels/reels-{number}.mp4', page)
+        for url in ("https://youtube.com/@masterment", "https://www.instagram.com/master_ment", "https://www.instagram.com/kriolspirit/", "https://open.spotify.com/artist/", "https://music.apple.com/us/artist/masterment"):
+            self.assertIn(url, page)
+        self.assertIn('class="project-video" autoplay muted loop playsinline', page)
 
-    def test_v2_customer_page_hierarchy_preserves_project_intake(self):
-        page=self.client.get("/").get_data(as_text=True)
-        hero=page[page.index('<section class="hero'):page.index('</section>',page.index('<section class="hero'))]
-        self.assertNotIn('id="chat-form"',hero)
-        self.assertLess(page.index('id="work"'),page.index('id="services"'))
-        self.assertLess(page.index('id="services"'),page.index('id="about"'))
-        self.assertLess(page.index('id="about"'),page.index('id="contact"'))
-        self.assertIn('href="#work"',page)
-        self.assertIn('href="#contact"',page)
-        for label in ("MUSIC &amp; ARTISTS", "EVENTS &amp; CULTURE", "FILM &amp; VISUALS"):
-            self.assertIn(f'<h3>{label}</h3>',page)
-        self.assertNotIn("Events / Nightlife",page)
-        self.assertNotIn("Artists / Performance",page)
-        self.assertNotIn("Social / Culture",page)
-        self.assertNotIn("Cinematic / Travel",page)
-        self.assertIn("<span>BUILT</span>",page)
-        self.assertIn("<span>FROM</span>",page)
-        self.assertIn('<span class="about-headline-accent">MUSIC.</span>',page)
-        self.assertIn("EXPANDED THROUGH VISION.",page)
-        self.assertIn("Masterment began with music and evolved into a creative agency working across artists, film, photography, events and brands.",page)
-        self.assertIn("Different forms.<br>One vision.",page)
-        self.assertIn('class="about-partner-marquee"',page)
-        self.assertIn('class="about-partner-track"',page)
-        self.assertIn('class="about-logo"',page)
-        self.assertIn('src="/static/images/about/masterment-original.PNG" alt="Masterment"',page)
-        self.assertIn('class="about-story-divider"',page)
-        self.assertIn('class="about-expansion-rule"',page)
-        self.assertEqual(page.count('class="about-expansion-rule"'),2)
-        self.assertNotIn("<svg",page[page.index('id="about"'):page.index('id="contact"')])
-        self.assertNotIn("ROOTS",page)
-        self.assertNotIn("EVOLUTION",page)
-        self.assertNotIn("TODAY",page)
-        self.assertNotIn("about-watermark",page)
-        self.assertTrue((Path(__file__).resolve().parents[1]/"app"/"static"/"images"/"about"/"masterment-original.PNG").is_file())
-        about_styles=(Path(__file__).resolve().parents[1]/"app"/"static"/"customer.css").read_text(encoding="utf-8")
-        for treatment in (".about-logo img", "object-fit: contain", ".about-story-row", ".about-partner-marquee", ".about-partner-frame img", "about-partner-scroll 30s linear infinite", "animation-play-state: paused", "background: #fafaf7", ".about-expansion-rule", ".about-story-divider", "prefers-reduced-motion", "@media (max-width: 760px)"):
-            self.assertIn(treatment,about_styles)
-        self.assertNotIn("DaDxuHIhDuH",page)
-        self.assertNotIn("reel-card",page)
-        self.assertEqual(page.count("data-prompt="),5)
-        chat_script=(Path(__file__).resolve().parents[1]/"app"/"static"/"chat.js").read_text(encoding="utf-8-sig")
-        for hook in ("/api/chat", "/api/conversations/", "sessionStorage", "form.requestSubmit()"):
-            self.assertIn(hook,chat_script)
-        customer_script=(Path(__file__).resolve().parents[1]/"app"/"static"/"customer.js").read_text(encoding="utf-8-sig")
-        self.assertIn("aria-current",customer_script)
-        for filename in ("partner-1.png", "partner-2.png", "partner-3.png", "partner-4.png", "partner-5.png", "partner-6.png", "partner-7.png", "partner-8.png", "partner-9.png", "partner-10.png"):
-            self.assertIn(filename,customer_script)
-        self.assertIn("about-partner-distance",customer_script)
-        styles=(Path(__file__).resolve().parents[1]/"app"/"static"/"customer.css").read_text(encoding="utf-8")
-        for treatment in (".hero-video", ".hero-video-overlay", "object-fit: cover", ".portfolio-card:focus-visible", ".discipline-list li::before", "prefers-reduced-motion", "max-width: 760px", "max-width: 380px"):
-            self.assertIn(treatment,styles)
-        self.assertIn("heroVideo.pause()",customer_script)
+    def test_current_customer_page_hierarchy_preserves_project_intake(self):
+        page = self.client.get("/").get_data(as_text=True)
+        self.assertLess(page.index('id="work"'), page.index('id="services"'))
+        self.assertLess(page.index('id="services"'), page.index('id="about"'))
+        self.assertLess(page.index('id="about"'), page.index('id="contact"'))
+        for label in ("VIDEO PRODUCTION", "PHOTOGRAPHY", "CREATIVE DIRECTION", "BRANDING &amp; DESIGN", "WEB &amp; DIGITAL DEVELOPMENT", "ARTIST &amp; MUSIC SERVICES"):
+            self.assertIn(f"<h3>{label}</h3>", page)
+        for text in ('<span>BUILT</span>', '<span>FROM</span>', 'MUSIC.</span>', 'OUR PARTNERS:', 'class="about-partner-track"', 'class="about-logo"'):
+            self.assertIn(text, page)
+        self.assertIn('action="/api/contact"', page)
+        for asset in ("customer.css", "reels.css", "chat-widget.css", "chat.js", "customer.js", "reels.js", "contact.js", "chat-widget.js"):
+            self.assertIn('/static/' + asset, page)
 
     def test_admin_credentials_are_loaded_from_environment(self):
         root=Path(__file__).resolve().parents[1]

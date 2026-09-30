@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='about-final-copy-20260928') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='reels.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='chat-widget.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='pricing.css') }}">
 </head>
 <body class="customer-site">
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -23,6 +24,7 @@
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
       <a href="#work">Work</a>
       <a href="#services">Services</a>
+      <button class="pricing-trigger" type="button" aria-haspopup="dialog" aria-controls="pricing-dialog">PRICING</button>
       <a href="#about">About</a>
       <a class="nav-contact" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
     </nav>
@@ -199,7 +201,9 @@
           <button class="chat-close" type="button" aria-label="Minimize chat">&times;</button>
           <div class="conversation-brand"><img class="brand-symbol" src="{{ url_for('static', filename='images/masterment-logo.png') }}" width="22" height="22" alt="" aria-hidden="true"><span>MASTERMENT</span></div>
           <h3 id="conversation-title">Welcome to Masterment.</h3>
-          <p>Tell us about what you're looking to create.</p>
+          <p>Tell us about what you're looking to create.
+            <span class="conversation-helper">Ask about pricing, packages, websites, Business Bots, video production, events, weddings, real estate, or custom projects.</span>
+          </p>
         </div>
         <div class="quick-starts" role="group" aria-label="Choose a project type">
           <button type="button" data-prompt="I'm interested in a music video.">Music Video</button>
@@ -226,6 +230,8 @@
       <svg class="chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
   </div>
+  {% include '_pricing.html' %}
+  <script src="{{ url_for('static', filename='pricing.js') }}" defer></script>
   <script src="{{ url_for('static', filename='chat.js') }}" defer></script>
   <script src="{{ url_for('static', filename='customer.js') }}" defer></script>
   <script src="{{ url_for('static', filename='reels.js') }}" defer></script>

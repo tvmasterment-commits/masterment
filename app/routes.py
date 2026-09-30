@@ -7,6 +7,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request, Res
 from .db import connect, ensure_conversation, add_message, upsert_lead
 from .assistant import extract_from_history, generate_reply, read_knowledge
 from .limiter import check_rate_limit
+from .pricing import pricing_view
 
 bp = Blueprint("main", __name__)
 FIELDS = ("name", "phone", "email", "service", "project_date", "location", "budget", "description")
@@ -24,7 +25,7 @@ def admin_required(fn):
 @bp.get("/")
 def home():
     knowledge = read_knowledge(current_app.config["KNOWLEDGE_PATH"])
-    return render_template("index.html", knowledge=knowledge)
+    return render_template("index.html", knowledge=knowledge, pricing_sections=pricing_view(knowledge))
 
 @bp.get("/health")
 def health():
@@ -94,8 +95,9 @@ def chat():
         rows = db.execute("SELECT role,content FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
         history = [{"role": r["role"], "content": r["content"]} for r in rows]
         # Extraction and persistence are independent of the conversational response.
-        extracted = {**lead, **extract_from_history(history)}
-        reply = generate_reply(history, extracted, read_knowledge(current_app.config["KNOWLEDGE_PATH"]))
+        knowledge = read_knowledge(current_app.config["KNOWLEDGE_PATH"])
+        extracted = {**lead, **extract_from_history(history, knowledge)}
+        reply = generate_reply(history, extracted, knowledge)
         saved = upsert_lead(db, conversation_id, extracted)
         add_message(db, conversation_id, "assistant", reply)
         captured = {field: saved[field] for field in FIELDS if saved[field]}

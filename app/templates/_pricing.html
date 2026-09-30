@@ -1,0 +1,56 @@
+<dialog class="pricing-dialog" id="pricing-dialog" aria-labelledby="pricing-title" aria-describedby="pricing-intro">
+  <div class="pricing-topbar">
+    <span class="pricing-brand">MASTERMENT</span>
+    <button class="pricing-close" type="button" aria-label="Close pricing" autofocus>&times;</button>
+  </div>
+  <div class="pricing-scroll" tabindex="0" aria-label="Services and pricing catalog">
+    <header class="pricing-heading">
+      <p class="pricing-eyebrow">CREATIVE PRODUCTION &amp; DIGITAL SOLUTIONS</p>
+      <h2 id="pricing-title">SERVICES <em>&amp; PRICING</em></h2>
+      <p id="pricing-intro">Creative production and digital solutions built around your business.</p>
+    </header>
+    <nav class="pricing-index" aria-label="Pricing categories">
+      {% for section in pricing_sections %}<a href="#pricing-{{ section.id }}">{{ section.title }}</a>{% endfor %}
+    </nav>
+    {% for section in pricing_sections %}
+    <section class="pricing-section" id="pricing-{{ section.id }}" aria-labelledby="pricing-heading-{{ section.id }}">
+      <div class="pricing-section-heading"><span class="pricing-number">{{ '%02d'|format(loop.index) }}</span><h3 id="pricing-heading-{{ section.id }}">{{ section.title }}</h3></div>
+      {% if section.intro %}<p class="pricing-section-intro">{{ section.intro }}</p>{% endif %}
+      {% if section.offers %}
+      <div class="{{ 'pricing-cards' if section.layout == 'cards' else 'pricing-services' }}">
+        {% for offer in section.offers %}
+        <article class="pricing-offer {{ 'pricing-card' if section.layout == 'cards' else 'pricing-row' }}">
+          <h4>{{ offer.name }}</h4>
+          <p class="pricing-amount">
+            {% for price in offer.prices %}
+            {% if not loop.first %}<span class="pricing-plus" aria-label="plus">+</span>{% endif %}
+            <span class="pricing-price-line">{% if price.startswith('Starting at ') %}<span class="pricing-starting">Starting at</span>{% endif %}<span>{{ price.replace('Starting at ', '').replace('/month', '') }}</span>{% if '/month' in price %}<small> / month</small>{% elif offer.prices|length > 1 %}<small> setup</small>{% endif %}</span>
+            {% endfor %}
+          </p>
+          {% if offer.summary %}<p class="pricing-summary">{{ offer.summary }}</p>{% endif %}
+          {% if offer.brief %}<p class="pricing-brief">{{ offer.brief }}</p>{% endif %}
+          {% if offer.includes %}
+          <details class="pricing-details"><summary>VIEW DETAILS</summary><ul>{% for item in offer.includes %}<li>{{ item }}</li>{% endfor %}</ul></details>
+          {% endif %}
+          <button class="pricing-select" type="button" data-pricing-selection="{{ offer.selection }}" data-pricing-price="{{ offer.display_price }}" aria-label="Get started with {{ offer.name }}">GET STARTED <span aria-hidden="true">↗</span></button>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="pricing-custom">
+        <p class="pricing-quote">CUSTOM QUOTE</p>
+        <ul>{% for item in section['items'] %}<li>{{ item }}</li>{% endfor %}</ul>
+        <button class="pricing-select" type="button" data-pricing-selection="{{ section.title }}" data-pricing-price="Custom Quote">START A PROJECT <span aria-hidden="true">↗</span></button>
+      </div>
+      {% endif %}
+      {% if section.note %}<p class="pricing-note">{{ section.note }}</p>{% endif %}
+    </section>
+    {% endfor %}
+    <p class="pricing-note pricing-scope">Starting prices are not final quotes. Final pricing depends on scope; complex projects and combinations require a custom quote.</p>
+    <footer class="pricing-footer">
+      <p class="pricing-eyebrow">LET’S MAKE IT HAPPEN</p>
+      <h3>NOT SURE WHICH OPTION<br>FITS YOUR PROJECT?</h3>
+      <div class="pricing-actions"><a class="pricing-project" href="#contact">START A PROJECT <span aria-hidden="true">↗</span></a><button class="pricing-ask" type="button">ASK MASTERMENT <span aria-hidden="true">↗</span></button></div>
+    </footer>
+  </div>
+</dialog>

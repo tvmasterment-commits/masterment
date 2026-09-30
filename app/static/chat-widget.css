@@ -41,6 +41,7 @@
 .chat-widget .conversation-heading { position: relative; flex: 0 0 auto; padding-right: 30px; }
 .chat-widget .conversation-brand { margin-bottom: 12px; }
 .chat-widget .conversation-heading h3 { font-size: 27px; }
+.chat-widget .conversation-helper { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.6; }
 .chat-close { position: absolute; top: -12px; right: -12px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--silver); font-size: 25px; cursor: pointer; }
 .chat-close:hover { color: var(--gold-light); }
 .chat-widget .quick-starts { flex: 0 0 auto; gap: 6px; margin: 16px 0 12px; }

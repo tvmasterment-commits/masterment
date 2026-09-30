@@ -1,20 +1,644 @@
 {
   "company_name": "Masterment LLC",
   "assistant_name": "Masterment",
-  "description": "Masterment is a creative production company working across music video, film, photography, events, content and visual identity.",
+  "description": "Masterment is a creative production & digital solutions company.",
   "services": [
     "Music video production",
     "Video production",
     "Photography",
     "Event coverage",
     "Creative content production",
-    "Branding and visual creative services"
+    "Branding and visual creative services",
+    "Reels",
+    "Social content",
+    "Music videos",
+    "Events",
+    "Nightlife",
+    "Club coverage",
+    "Weddings",
+    "Sweet 16",
+    "Birthday events",
+    "Testimonials",
+    "Business promotional videos",
+    "Artist visuals",
+    "Creative direction",
+    "Branding",
+    "Graphic design",
+    "Cover artwork",
+    "Posters",
+    "Business cards",
+    "Drone content",
+    "Real estate photography",
+    "Real estate videos",
+    "Realtor branding content",
+    "Website development",
+    "Website management",
+    "Website maintenance",
+    "Business Bot development",
+    "Bot integration",
+    "Bot maintenance",
+    "Custom programming",
+    "Digital solutions",
+    "International creative coordination",
+    "Music production connections",
+    "Dancer/talent connections"
   ],
   "business_hours": "[PLACEHOLDER: Add approved business hours]",
   "service_area": "[PLACEHOLDER: Add approved service area]",
   "contact_email": "[PLACEHOLDER: Add approved contact email]",
   "contact_phone": "[PLACEHOLDER: Add approved contact phone]",
-  "pricing": "[PLACEHOLDER: No approved pricing provided. Do not quote prices; collect the project scope and budget and offer follow-up.]",
   "booking_policy": "[PLACEHOLDER: Add approved booking, deposit, cancellation, and scheduling policies]",
-  "response_policy": "Do not promise availability or a response time. Collect lead details and explain that the team can follow up to discuss the project."
+  "response_policy": "Do not promise availability or a response time. Collect lead details and explain that the team can follow up to discuss the project.",
+  "business_knowledge": {
+    "1": "MASTERMENT MONTHLY CONTENT PACKAGES\n\nESSENTIAL — $400/month\n\nIncludes:\n- 2 professionally produced Reels per month\n- Approximately 30–60 seconds each\n- 10 professionally edited photos\n- Filming\n- Video editing\n- Color grading\n- Basic creative direction\n- Basic content planning\n- Social media posting recommendations\n- Basic social media marketing guidance\n- Basic paid-ad guidance\n- 1 revision round per Reel\n\nThis package is designed for businesses that want consistent professional\ncontent without requiring weekly production.\n\nGROWTH — $650/month\n\nIncludes:\n- 4 professionally produced Reels per month\n- Approximately 30–60 seconds each\n- 15 professionally edited photos\n- Filming\n- Video editing\n- Color grading\n- Creative direction\n- Content planning\n- Content ideas\n- Caption/post recommendations\n- Social media guidance\n- Advertising guidance\n- Monthly strategy check-in\n- 1 revision round per Reel\n\nThis package is appropriate for businesses looking for approximately\nweekly video content.\n\nSIGNATURE — $900/month\n\nIncludes:\n- 6 professionally produced Reels per month\n- Approximately 30–60 seconds each\n- 25 professionally edited photos\n- Filming\n- Video editing\n- Color grading\n- Advanced creative direction\n- Content planning\n- Content strategy\n- Caption/post recommendations\n- Social media guidance\n- Advertising guidance\n- Monthly strategy check-in\n- Priority turnaround\n- 2 revision rounds per Reel\n\nIMPORTANT:\n\nThese are recurring MONTHLY CONTENT packages.\n\nWebsite development and Business Bot development are NOT included in\nthese monthly content package prices.\n\nMasterment provides advertising GUIDANCE only under these packages.\n\nThe client:\n- Creates their advertising campaigns\n- Controls their advertising accounts\n- Selects/pays their advertising budget\n\nAd spend is NOT included.\n\nNever guarantee:\n- Views\n- Followers\n- Leads\n- Sales\n- Revenue\n- Memberships\n- Viral content\n- Advertising results",
+    "2": "SINGLE / PROJECT-BASED CREATIVE SERVICES\n\nApproved pricing:\n\nSINGLE REEL\n$250\n\nPHOTOGRAPHY SESSION\nStarting at $250\n\nEVENT VIDEO\nStarting at $350\n\nNIGHTCLUB / PARTY COVERAGE\nStarting at $400\n\nBUSINESS TESTIMONIAL VIDEO\nStarting at $350\n\nBUSINESS PROMOTIONAL VIDEO\nStarting at $500\n\nDRONE ADD-ON\nStarting at $150\n\nCOVER ART / POSTER\nStarting at $100\n\nIMPORTANT:\n\nOnly use a fixed price when explicitly approved above.\n\n\"Starting at\" means final pricing depends on project requirements.\n\nDo not invent final prices.",
+    "3": "MUSIC VIDEO SERVICES\n\nBASIC MUSIC VIDEO\nStarting at $600\n\nSTANDARD MUSIC VIDEO\nStarting at $1,000\n\nPREMIUM / CINEMATIC MUSIC VIDEO\nStarting at $1,500\nor Custom Quote depending on production requirements.\n\nPossible pricing factors:\n- Concept\n- Number of locations\n- Production hours\n- Crew\n- Lighting\n- Equipment\n- Actors/models/dancers\n- Travel\n- Drone\n- Special effects\n- Editing complexity\n- Turnaround\n\nCollect:\n- Artist name\n- Song/style\n- Concept\n- Location\n- Number of locations\n- Desired production date\n- Deadline\n- Budget\n- Contact information\n\nLarger productions should be CUSTOM QUOTE.",
+    "4": "WEDDINGS\n\nWEDDING HIGHLIGHT VIDEO\nStarting at $750\n\nWEDDING PHOTO + VIDEO\nStarting at $1,200\n\nPossible services:\n- Ceremony coverage\n- Reception coverage\n- Couple footage\n- Detail shots\n- Speeches\n- First dance\n- Highlight film\n- Photography\n- Social media highlight/Reel\n\nCollect:\n- Wedding date\n- Venue/location\n- Approximate coverage hours\n- Photo/video/both\n- Desired deliverables\n- Number of locations if applicable\n- Budget\n- Contact information\n\nLarger wedding productions:\nCUSTOM QUOTE.",
+    "5": "SWEET 16 / BIRTHDAY EVENTS\n\nSWEET 16 VIDEO COVERAGE\nStarting at $500\n\nSWEET 16 PHOTOGRAPHY\nStarting at $400\n\nSWEET 16 PHOTO + VIDEO\nStarting at $800\n\nSHORT EVENT REEL / HIGHLIGHT\nStarting at $250\n\nPossible services:\n- Event coverage\n- Professional photography\n- Highlight video\n- Short-form Reels\n- Entrance coverage\n- Speeches\n- Family/friend moments\n- Dance floor coverage\n- Detail/decor shots\n- Social-media-ready content\n\nCollect:\n- Event date\n- Location\n- Number of hours\n- Photo/video/both\n- Desired deliverables\n- Budget\n- Contact information\n\nLarger productions:\nCUSTOM QUOTE.",
+    "6": "REAL ESTATE\n\nMasterment provides real estate content for:\n- Realtors\n- Real estate agents\n- Brokers\n- Property owners\n- Developers\n- Property management companies\n- Airbnb / short-term rental properties\n\nREAL ESTATE PHOTOGRAPHY\nStarting at $250\n\nREAL ESTATE VIDEO / PROPERTY REEL\nStarting at $300\n\nPHOTO + VIDEO PROPERTY PACKAGE\nStarting at $450\n\nREALTOR PERSONAL BRANDING REEL\nStarting at $250\n\nDRONE ADD-ON\nStarting at $150\n\nPossible services:\n- Interior photography\n- Exterior photography\n- Property walkthrough videos\n- Vertical property Reels\n- Listing videos\n- Agent introduction videos\n- Realtor branding content\n- Neighborhood/lifestyle content\n- Social media property content\n- Drone footage when operationally and legally available\n\nCollect:\n- Agent/company name\n- Property location\n- Property type\n- Approximate property size\n- Photo/video requirements\n- Drone requirements\n- Desired date\n- Number of listings if recurring\n- Budget\n- Contact information\n\nIf a Realtor/company needs recurring production across multiple listings,\ncollect the requirements and create a CUSTOM MONTHLY QUOTE.\n\nNever guarantee drone availability.\n\nDrone availability depends on:\n- Location\n- Weather\n- Airspace restrictions\n- Operational feasibility\n- Applicable regulations",
+    "7": "WEBSITE DEVELOPMENT\n\nMasterment builds professional websites.\n\nSTARTER WEBSITE\n\nSetup:\n$750\n\nMonthly:\n$49/month\n\nTypical use:\n- Small business\n- Approximately 1–3 pages\n- Responsive/mobile design\n- Services\n- About\n- Contact form\n- Social links\n- Basic deployment/hosting assistance\n\nBUSINESS WEBSITE\n\nSetup:\n$1,200\n\nMonthly:\n$79/month\n\nTypical use:\n- Approximately up to 5 pages\n- More customized design\n- Lead/contact forms\n- Portfolio/gallery\n- Business service pages\n- Responsive/mobile design\n- Deployment\n- Basic performance optimization\n- Website updates/maintenance\n\nADVANCED WEBSITE\n\nSetup:\nStarting at $1,800\n\nMonthly:\nStarting at $129/month\n\nPossible use:\n- More complex websites\n- More pages\n- Booking functionality\n- Custom programming\n- Advanced integrations\n- Custom workflows\n- More extensive maintenance\n\nIMPORTANT:\n\nDomain registration, premium third-party services, special integrations,\ne-commerce costs, external subscriptions, or unusual infrastructure costs\nmay be separate.\n\nDo NOT promise that every external cost is included in the monthly fee.\n\nFor requirements outside these packages:\nCUSTOM QUOTE.",
+    "8": "WEBSITE MANAGEMENT & MAINTENANCE\n\nMasterment can manage websites after launch.\n\nMasterment can also manage a website that was NOT originally built by\nMasterment, when technically feasible.\n\nPossible services:\n- Text updates\n- Photo updates\n- Video updates\n- Service updates\n- Price updates\n- Adding/removing sections\n- Minor design changes\n- Website maintenance\n- Basic technical support\n- Performance optimization\n- General website management\n- Bot integration\n- Bot updates\n\nIf no approved package applies:\nCUSTOM QUOTE.",
+    "9": "MASTERMENT BUSINESS BOT / VIRTUAL RECEPTIONIST\n\nMasterment builds Business Bots / Virtual Receptionists for businesses.\n\nA customer does NOT need a Masterment-built website.\n\nIf they already have a website, Masterment may integrate a Business Bot\ninto their existing website when technically possible.\n\nPossible bot capabilities:\n- Answer business questions\n- Explain services\n- Answer FAQs\n- Collect leads\n- Collect name\n- Collect email\n- Collect phone\n- Collect desired service\n- Collect project details\n- Collect preferred date/timeline\n- Collect budget\n- Qualify leads\n- Save conversation/lead information\n- Direct customers toward contact/booking\n- Custom business knowledge\n- Admin/lead management when included\n- Ongoing maintenance\n- Business information updates",
+    "10": "BUSINESS BOT PRICING\n\nSTARTER BOT\n\nSetup:\n$300\n\nOngoing:\n$79/month\n\nDesigned for:\n- FAQs\n- Business information\n- Services\n- Hours\n- Contact information\n- Basic website integration\n\nBUSINESS BOT\n\nSetup:\n$500\n\nOngoing:\n$149/month\n\nDesigned for:\n- Everything in Starter\n- Lead capture\n- Lead qualification\n- Custom questions\n- Project/customer information collection\n- Basic lead/conversation history\n- Admin/lead functionality when appropriate\n- Monthly knowledge updates\n- Ongoing support\n\nADVANCED BOT\n\nSetup:\nStarting at $800\n\nOngoing:\nStarting at $249/month\n\nDesigned for:\n- Advanced custom workflows\n- More complex automations\n- Advanced integrations\n- Custom programming\n- More extensive support\n- More complex business logic\n\nIMPORTANT:\n\nNever promise unlimited AI/API usage.\n\nRecurring service may cover:\n- Hosting/operation\n- AI/API usage within reasonable plan limits\n- Monitoring\n- Maintenance\n- Knowledge updates\n- Technical support\n\nHigh usage, premium integrations, third-party subscriptions, or unusual\ninfrastructure requirements may result in additional charges.\n\nIf requirements exceed the package:\nCUSTOM QUOTE.",
+    "11": "WEBSITE + BOT OPTIONS\n\nMasterment can provide:\n\nA. Website only\nB. Business Bot only\nC. Website + Business Bot\nD. Website management\nE. Bot maintenance\nF. Website + Bot ongoing management\n\nIf a client already has a website:\nDO NOT unnecessarily try to sell them another website.\n\nSay:\n\n\"Masterment may be able to integrate a custom Business Bot into your\nexisting website.\"\n\nThen collect:\n- Website URL\n- Business type\n- Desired bot functions\n- FAQs/services\n- Lead information they want collected\n- Booking/contact requirements\n- Integrations\n- Timeline\n- Budget\n- Contact information",
+    "12": "INTERNATIONAL CREATIVE PRODUCTION\n\nMasterment can help clients coordinate creative/video production through\nits network.\n\nCurrent locations include:\n\n- United States\n- Cabo Verde\n- Portugal\n\nIf someone needs production in Cabo Verde or Portugal:\n\nDo NOT automatically say Masterment cannot help.\n\nExplain that Masterment may be able to coordinate the production or\nconnect the client with an appropriate creative professional through its\nnetwork.\n\nCollect:\n- Country\n- City/island\n- Type of project\n- Desired date\n- Production requirements\n- Budget\n- Contact information\n\nInternational projects:\nCUSTOM QUOTE.\n\nDo NOT guarantee availability until Masterment confirms the appropriate\nprofessional/team.",
+    "13": "MUSIC PRODUCTION NETWORK\n\nMasterment may help artists/clients connect with music professionals.\n\nPossible needs:\n- Beat production\n- Producers\n- Recording-related services\n- Mixing\n- Mastering\n- Mix & master\n- Other music production needs\n\nThese may be provided through Masterment's creative network.\n\nDo NOT invent pricing.\n\nCollect:\n- Artist/client name\n- Music genre/style\n- Service required\n- Number of songs\n- Deadline\n- Budget\n- Contact information\n\nClassification:\n\nMUSIC PRODUCTION / CREATIVE NETWORK\nCUSTOM QUOTE.",
+    "14": "DANCERS / CREATIVE TALENT\n\nMasterment may help connect clients with dancers or other creative talent.\n\nExamples:\n- Music video dancers\n- Performance dancers\n- Choreography-related talent\n- Event dancers\n- Promotional productions\n- Creative talent\n\nCollect:\n- Project type\n- Location\n- Date\n- Number of dancers if known\n- Dance style\n- Approximate hours\n- Budget\n- Contact information\n\nCUSTOM QUOTE.\n\nDo NOT guarantee availability or pricing until Masterment confirms with\nthe appropriate talent.",
+    "15": "CREATIVE NETWORK LANGUAGE\n\nThe chatbot must distinguish between:\n\nA. Services provided directly by Masterment\n\nand\n\nB. Services coordinated/sourced through Masterment's creative network.\n\nNever falsely claim that every:\n- Producer\n- Engineer\n- Dancer\n- Filmmaker\n- International professional\n- Talent\n\nis an employee of Masterment.\n\nApproved language includes:\n\n\"Masterment may be able to coordinate that through our creative network.\"\n\n\"We can help connect you with the right creative professional.\"\n\n\"We can collect the project details and have the Masterment team confirm\navailability and pricing.\"\n\nDo NOT disclose private names, phone numbers, emails, or personal contact\ninformation of Masterment partners unless specifically approved in the\nbusiness knowledge.\n\nMasterment should remain the main inquiry point when coordinating the\nproject.",
+    "16": "OTHER MASTERMENT SERVICES\n\nDo NOT remove existing creative services.\n\nMasterment's broader service catalog may include:\n\n- Video production\n- Photography\n- Reels\n- Social content\n- Music videos\n- Events\n- Nightlife\n- Club coverage\n- Weddings\n- Sweet 16\n- Birthday events\n- Testimonials\n- Business promotional videos\n- Artist visuals\n- Creative direction\n- Branding\n- Graphic design\n- Cover artwork\n- Posters\n- Business cards\n- Drone content\n- Real estate photography\n- Real estate videos\n- Realtor branding content\n- Website development\n- Website management\n- Website maintenance\n- Business Bot development\n- Bot integration\n- Bot maintenance\n- Custom programming\n- Digital solutions\n- International creative coordination\n- Music production connections\n- Dancer/talent connections\n\nIf an approved price does not exist:\nCUSTOM QUOTE.",
+    "17": "CHATBOT SALES BEHAVIOR\n\nThe Masterment chatbot acts as a professional digital receptionist and\nsales assistant.\n\nThe chatbot should:\n\n1. Understand what the customer needs.\n2. Ask only relevant questions.\n3. Avoid repeating questions already answered.\n4. Recommend relevant options when enough information exists.\n5. Explain approved pricing clearly.\n6. Capture useful lead information.\n7. Know when a CUSTOM QUOTE is required.\n8. Avoid aggressive sales behavior.\n9. Never automatically recommend the most expensive package.\n10. Never pressure the customer.\n\nExample:\n\nCustomer:\n\"I own a gym and need content every month.\"\n\nThe bot should understand:\nRecurring Business Content.\n\nAsk relevant questions about:\n- Content goals\n- Posting frequency\n- Type of content\n- Location\n- Timeline\n\nThen explain relevant packages.\n\nIf approximately 2 Reels/month:\nEssential may fit.\n\nIf approximately weekly video:\nGrowth may fit.\n\nIf higher-volume recurring content:\nSignature may fit.\n\nBut do NOT force a package.\n\nIf requirements do not fit:\nCUSTOM QUOTE.",
+    "18": "LEAD CAPTURE\n\nPreserve the current lead capture system.\n\nContinue supporting:\n- Name\n- Contact\n- Service\n- Location\n- Project date/timeline\n- Budget\n- Project details\n- Conversation history\n- Lead status\n\nFor websites, bots, international projects, real estate, weddings,\nevents, music production, or talent requests, collect additional\nrelevant details when useful.\n\nDo not ask every possible question for every customer.\n\nAsk only what is relevant to that specific inquiry.\n\nDo not break existing database compatibility.\n\nIf structured database changes are required:\nExplain the proposed migration before applying anything destructive.",
+    "19": "PRICING RULES\n\nThe chatbot must NEVER invent:\n\n- Prices\n- Discounts\n- Packages\n- Features\n- Availability\n- Turnaround times\n- Integrations\n- Guarantees\n- Advertising results\n- Marketing results\n\nUse only approved Masterment pricing.\n\nIf pricing says:\n\"Starting at $X\"\n\ndo NOT present $X as a guaranteed final price.\n\nExplain that final pricing depends on scope.\n\nIf the customer requests something outside approved pricing:\nCUSTOM QUOTE.",
+    "20": "DISCOUNTS\n\nThe chatbot is NOT authorized to create discounts automatically.\n\nIf a customer asks:\n\n\"Can you do it cheaper?\"\n\nThe chatbot may collect:\n- Their budget\n- Required service\n- Required deliverables\n\nThen tell them the Masterment team can review the request.\n\nDo NOT invent a discounted price.",
+    "21": "MARKETING / RESULTS RULE\n\nMasterment does not guarantee:\n\n- Views\n- Followers\n- Viral videos\n- Leads\n- Sales\n- Revenue\n- Membership growth\n- Ad performance\n- Search rankings\n- Business growth\n\nMasterment provides:\n- Creative production\n- Content\n- Strategy/guidance\n- Technology\n- Implementation\n- Digital solutions\n\nResults depend on multiple factors outside Masterment's control.",
+    "22": "SERVICE COMBINATIONS\n\nCustomers may need multiple services.\n\nExamples:\n\nWebsite + Bot\n\nWebsite + Monthly Content\n\nMonthly Content + Business Bot\n\nMusic Video + Dancers\n\nMusic Video + Beat/Mix/Master connection\n\nWedding Photo + Video\n\nReal Estate Photo + Video + Drone\n\nBusiness Website + Business Bot + Monthly Content\n\nThe bot should recognize combinations.\n\nDo NOT simply add prices if requirements may affect scope.\n\nIf the combination is straightforward and all pricing is explicitly\napproved, the bot may explain the component prices.\n\nIf there is meaningful complexity:\nCUSTOM QUOTE."
+  },
+  "catalog": {
+    "monthly": {
+      "section": "1",
+      "service": "Recurring Business Content",
+      "patterns": [
+        "\\b(essential|growth|signature)\\b",
+        "\\b(monthly|recurring|weekly|every month|per month)\\b.*\\b(content|reels?|videos?)\\b",
+        "\\b(content|reels?|videos?)\\b.*\\b(monthly|recurring|weekly|every month|per month)\\b"
+      ],
+      "price_blocks": [
+        "ESSENTIAL",
+        "GROWTH",
+        "SIGNATURE"
+      ],
+      "questions": [
+        [
+          "content_goals",
+          "\\b(goal|awareness|engagement|launch|promot)\\w*\\b",
+          "What are your main content goals?"
+        ],
+        [
+          "frequency",
+          "\\b(\\d+|two|four|six)\\s+(reels?|videos?)\\b|\\bweekly\\b",
+          "How many Reels would you like each month?"
+        ]
+      ],
+      "intake_details": []
+    },
+    "single": {
+      "section": "2",
+      "service": "Reels",
+      "patterns": [
+        "\\b(single|one|1) reel\\b",
+        "\\breels?\\b"
+      ],
+      "price_blocks": [
+        "SINGLE REEL"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "photography": {
+      "section": "2",
+      "service": "Photography",
+      "patterns": [
+        "\\b(photography|photographer|photoshoot|photo shoot)\\b"
+      ],
+      "price_blocks": [
+        "PHOTOGRAPHY SESSION"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "event": {
+      "section": "2",
+      "service": "Event coverage",
+      "patterns": [
+        "\\b(event|concert|festival)\\b"
+      ],
+      "price_blocks": [
+        "EVENT VIDEO"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "nightclub": {
+      "section": "2",
+      "service": "Event coverage",
+      "patterns": [
+        "\\b(nightclub|nightlife|club night|party)\\b"
+      ],
+      "price_blocks": [
+        "NIGHTCLUB / PARTY COVERAGE"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "testimonial": {
+      "section": "2",
+      "service": "Business testimonial video",
+      "patterns": [
+        "\\btestimonial\\b"
+      ],
+      "price_blocks": [
+        "BUSINESS TESTIMONIAL VIDEO"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "promo": {
+      "section": "2",
+      "service": "Commercial production",
+      "patterns": [
+        "\\b(promotional video|promo video|commercial|advertisement|ad campaign)\\b"
+      ],
+      "price_blocks": [
+        "BUSINESS PROMOTIONAL VIDEO"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "drone": {
+      "section": "2",
+      "service": "Drone content",
+      "patterns": [
+        "\\bdrone\\b"
+      ],
+      "price_blocks": [
+        "DRONE ADD-ON"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "artwork": {
+      "section": "2",
+      "service": "Graphic design",
+      "patterns": [
+        "\\b(cover art|cover artwork|poster)\\b"
+      ],
+      "price_blocks": [
+        "COVER ART / POSTER"
+      ],
+      "questions": [],
+      "intake_details": []
+    },
+    "music_video": {
+      "section": "3",
+      "service": "Music video production",
+      "patterns": [
+        "\\bmusic[ -]video\\b"
+      ],
+      "price_blocks": [
+        "BASIC MUSIC VIDEO",
+        "STANDARD MUSIC VIDEO",
+        "PREMIUM / CINEMATIC MUSIC VIDEO"
+      ],
+      "questions": [],
+      "intake_details": [
+        "Artist name",
+        "Song/style",
+        "Concept",
+        "Location",
+        "Number of locations",
+        "Desired production date",
+        "Deadline",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "wedding": {
+      "section": "4",
+      "service": "Wedding production",
+      "patterns": [
+        "\\bwedding\\b"
+      ],
+      "price_blocks": [
+        "WEDDING HIGHLIGHT VIDEO",
+        "WEDDING PHOTO + VIDEO"
+      ],
+      "questions": [
+        [
+          "coverage",
+          "\\b(hours?|all day|full day)\\b",
+          "How many hours of coverage would you like?"
+        ],
+        [
+          "deliverables",
+          "photo|video|reel|film",
+          "Would you like photography, video, or both?"
+        ]
+      ],
+      "intake_details": [
+        "Wedding date",
+        "Venue/location",
+        "Approximate coverage hours",
+        "Photo/video/both",
+        "Desired deliverables",
+        "Number of locations if applicable",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "sweet16": {
+      "section": "5",
+      "service": "Sweet 16 / Birthday events",
+      "patterns": [
+        "\\b(sweet\\s*(16|sixteen)|birthday)\\b"
+      ],
+      "price_blocks": [
+        "SWEET 16 VIDEO COVERAGE",
+        "SWEET 16 PHOTOGRAPHY",
+        "SWEET 16 PHOTO + VIDEO",
+        "SHORT EVENT REEL / HIGHLIGHT"
+      ],
+      "questions": [
+        [
+          "coverage",
+          "\\b(hours?|all day|full day)\\b",
+          "How many hours of coverage would you like?"
+        ],
+        [
+          "deliverables",
+          "photo|video|reel|film",
+          "Would you like photography, video, or both?"
+        ]
+      ],
+      "intake_details": [
+        "Event date",
+        "Location",
+        "Number of hours",
+        "Photo/video/both",
+        "Desired deliverables",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "real_estate": {
+      "section": "6",
+      "service": "Real estate content",
+      "patterns": [
+        "\\b(real estate|realtor|property|house listing|listings?|airbnb|broker)\\b"
+      ],
+      "price_blocks": [
+        "REAL ESTATE PHOTOGRAPHY",
+        "REAL ESTATE VIDEO / PROPERTY REEL",
+        "PHOTO + VIDEO PROPERTY PACKAGE",
+        "REALTOR PERSONAL BRANDING REEL",
+        "DRONE ADD-ON"
+      ],
+      "questions": [
+        [
+          "property",
+          "\\b(house|condo|apartment|commercial|sq\\.?\\s*ft|square feet|bedroom)\\b",
+          "What type and approximate size of property is it?"
+        ],
+        [
+          "deliverables",
+          "photo|video|reel|film",
+          "Do you need property photos, video, or both?"
+        ],
+        [
+          "listings",
+          "\\b\\d+\\s+(listings|properties)\\b|\\bone (listing|property)\\b",
+          "How many listings need coverage?"
+        ]
+      ],
+      "intake_details": [
+        "Agent/company name",
+        "Property location",
+        "Property type",
+        "Approximate property size",
+        "Photo/video requirements",
+        "Drone requirements",
+        "Desired date",
+        "Number of listings if recurring",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "website": {
+      "section": "7",
+      "service": "Website development",
+      "patterns": [
+        "\\b(website|web site)\\b",
+        "\\bweb development\\b"
+      ],
+      "price_blocks": [
+        "STARTER WEBSITE",
+        "BUSINESS WEBSITE",
+        "ADVANCED WEBSITE"
+      ],
+      "questions": [
+        [
+          "existing_website",
+          "https?://\\S+|\\b(already|existing|have a website|no website|new website)\\b",
+          "Do you already have a website? If so, what is its URL?"
+        ],
+        [
+          "pages_features",
+          "\\b(pages?|booking|gallery|portfolio|forms?|e-commerce|ecommerce)\\b",
+          "What pages and features does the website need?"
+        ]
+      ],
+      "intake_details": []
+    },
+    "management": {
+      "section": "8",
+      "service": "Website management",
+      "patterns": [
+        "\\b(website|site)\\s+(management|maintenance|updates?)\\b",
+        "\\b(manage|maintain|update)\\b.*\\b(website|site)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [],
+      "intake_details": []
+    },
+    "bot": {
+      "section": "10",
+      "service": "Business Bot",
+      "patterns": [
+        "\\b(bot|bots|chatbot|chatbots|virtual receptionist)\\b"
+      ],
+      "price_blocks": [
+        "STARTER BOT",
+        "BUSINESS BOT",
+        "ADVANCED BOT"
+      ],
+      "questions": [
+        [
+          "website_url",
+          "https?://\\S+|\\b(no website|new website)\\b",
+          "What is your existing website URL, or do you need a new site?"
+        ],
+        [
+          "bot_functions",
+          "\\b(faqs?|leads?|booking|questions|qualif\\w*|integrat\\w*|automati\\w*)\\b",
+          "What should the bot help customers do: answer FAQs, collect leads, or support another workflow?"
+        ]
+      ],
+      "intake_details": []
+    },
+    "international": {
+      "section": "12",
+      "service": "International creative coordination",
+      "patterns": [
+        "\\b(cabo verde|cape verde|portugal|international)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [
+        [
+          "city",
+          "\\b(city|island|praia|mindelo|sal|boa vista|santiago|lisbon|lisboa|porto|boston)\\b",
+          "Which city or island is the production in?"
+        ],
+        [
+          "requirements",
+          "\\b(music video|wedding|event|photography|film|reel|commercial)\\b",
+          "What type of production do you need?"
+        ]
+      ],
+      "intake_details": [
+        "Country",
+        "City/island",
+        "Type of project",
+        "Desired date",
+        "Production requirements",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "music_network": {
+      "section": "13",
+      "service": "Music production / Creative network",
+      "patterns": [
+        "\\b(mix(?:ing)?(?: and| &)? master(?:ing)?|mix(?:ing)?|mastering|mix/master|beats?|producer|recording|music production)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [
+        [
+          "style",
+          "\\b(genre|style|hip.hop|r&b|pop|rock|afro\\w*|kizomba|rap)\\b",
+          "What music genre or style are you working in?"
+        ],
+        [
+          "songs",
+          "\\b(\\d+|one|two|three|my|a)\\s+(song|songs|track|tracks)\\b",
+          "How many songs need work?"
+        ]
+      ],
+      "intake_details": [
+        "Artist/client name",
+        "Music genre/style",
+        "Service required",
+        "Number of songs",
+        "Deadline",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "talent": {
+      "section": "14",
+      "service": "Dancers / Creative talent",
+      "patterns": [
+        "\\b(dancers?|choreograph\\w*|creative talent|models?|actors?)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [
+        [
+          "style",
+          "\\b(style|hip.hop|afro\\w*|ballet|contemporary|salsa|kizomba)\\b",
+          "What dance style or type of talent do you need?"
+        ],
+        [
+          "count",
+          "\\b(\\d+|one|two|three|four)\\s+(dancers?|performers?|models?|actors?)\\b",
+          "How many dancers or performers do you need?"
+        ]
+      ],
+      "intake_details": [
+        "Project type",
+        "Location",
+        "Date",
+        "Number of dancers if known",
+        "Dance style",
+        "Approximate hours",
+        "Budget",
+        "Contact information"
+      ]
+    },
+    "bot_maintenance": {
+      "section": "11",
+      "service": "Bot maintenance",
+      "patterns": [
+        "\\b(bot|chatbot) (maintenance|updates?|management)\\b",
+        "\\b(maintain|update|manage)\\b.*\\b(bot|chatbot)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [],
+      "intake_details": []
+    },
+    "unpriced": {
+      "section": "16",
+      "service": "Other creative and digital services",
+      "patterns": [
+        "\\b(business cards?|custom programming|graphic design|digital solutions|artist visuals|creative direction)\\b"
+      ],
+      "price_blocks": [],
+      "questions": [],
+      "intake_details": []
+    }
+  },
+  "responses": {
+    "results_limits": "Masterment does not guarantee views, followers, leads, sales, revenue, memberships, viral content, advertising results, search rankings, or business growth. Bot plans do not include unlimited AI/API usage; high usage and external services may cost extra.",
+    "custom_scope": "That scope needs a CUSTOM QUOTE. The Masterment team can review the requirements and budget.",
+    "unpriced": "That service needs a CUSTOM QUOTE; final pricing depends on the project scope.",
+    "international": "Masterment may be able to coordinate production through its creative network in the United States, Cabo Verde, or Portugal. International production requires a CUSTOM QUOTE, with availability and pricing confirmed by the team.",
+    "music_network": "Masterment may be able to connect you with a music professional through its creative network for beats, recording, mixing or mastering. CUSTOM QUOTE; the team must confirm availability and pricing.",
+    "talent": "Masterment may be able to coordinate dancers or other talent through its creative network. CUSTOM QUOTE; availability and pricing require confirmation with the appropriate talent.",
+    "management": "Masterment can manage and maintain websites, including sites built by others when technically feasible. Work outside an approved package needs a CUSTOM QUOTE.",
+    "custom_service": "Masterment can review that service as a CUSTOM QUOTE based on your requirements. The team must confirm scope and pricing.",
+    "starting_prices": "Starting prices are not final quotes; final pricing depends on scope. Larger or more complex productions require a CUSTOM QUOTE.",
+    "monthly_exclusions": "These are recurring monthly content packages. Website and Bot development and ad spend are separate. Advertising guidance only: you create campaigns, control your accounts, and choose and pay the ad budget. Results are not guaranteed.",
+    "website_exclusions": "Domain registration, premium services, integrations, e-commerce, subscriptions and unusual infrastructure may cost extra. Requirements outside these packages need a CUSTOM QUOTE.",
+    "drone_limits": "Drone availability is not guaranteed and depends on location, weather, airspace, operational feasibility and applicable regulations.",
+    "combinations": "These are component options, not a combined estimate. A complex combination requires a CUSTOM QUOTE.",
+    "recurring_properties": "Recurring production across property listings requires a CUSTOM MONTHLY QUOTE based on the listing requirements.",
+    "discount": "I can’t authorize discounts. The Masterment team can review your budget and required deliverables; no discounted price is confirmed.",
+    "existing_site_bot_limits": "You don’t necessarily need a new website. Masterment may be able to integrate a custom Business Bot into your existing website when technically possible. AI/API usage has reasonable plan limits; high usage, premium integrations, third-party subscriptions and unusual infrastructure may cost extra."
+  },
+  "public_pricing": {
+    "sections": [
+      {
+        "id": "monthly",
+        "title": "Monthly Content",
+        "layout": "cards",
+        "catalog_keys": [
+          "monthly"
+        ],
+        "briefs": {
+          "ESSENTIAL": "Consistent professional content for businesses building their presence.",
+          "GROWTH": "Weekly content and stronger creative support for growing businesses.",
+          "SIGNATURE": "Higher-volume content production with advanced creative support."
+        },
+        "note": "Advertising guidance only; clients create and control their campaigns. Ad spend, website development and Business Bot development are separate. Results are not guaranteed."
+      },
+      {
+        "id": "creative",
+        "title": "Video & Creative Production",
+        "catalog_keys": [
+          "single",
+          "photography",
+          "event",
+          "nightclub",
+          "testimonial",
+          "promo",
+          "drone",
+          "artwork"
+        ],
+        "note": "Drone availability depends on location, weather, airspace restrictions, operational feasibility and applicable regulations."
+      },
+      {
+        "id": "music",
+        "title": "Music Videos",
+        "catalog_keys": [
+          "music_video"
+        ],
+        "note": "Final pricing may vary based on concept, locations, production requirements and project scope."
+      },
+      {
+        "id": "weddings",
+        "title": "Weddings",
+        "catalog_keys": [
+          "wedding"
+        ],
+        "note": "Custom wedding productions available."
+      },
+      {
+        "id": "birthday",
+        "title": "Sweet 16 / Birthday",
+        "catalog_keys": [
+          "sweet16"
+        ]
+      },
+      {
+        "id": "property",
+        "title": "Real Estate",
+        "catalog_keys": [
+          "real_estate"
+        ],
+        "note": "Recurring content packages are available for agents and real estate businesses with multiple listings, through a custom monthly quote."
+      },
+      {
+        "id": "web",
+        "title": "Web & Digital",
+        "layout": "cards",
+        "catalog_keys": [
+          "website"
+        ],
+        "briefs": {
+          "STARTER WEBSITE": "Professional website solution for smaller businesses.",
+          "BUSINESS WEBSITE": "A more customized business website with expanded content and lead functionality.",
+          "ADVANCED WEBSITE": "Custom websites requiring more advanced functionality or development."
+        },
+        "note": "Domain fees, premium third-party services and certain integrations may be separate."
+      },
+      {
+        "id": "bots",
+        "title": "Business Bot / Virtual Receptionist",
+        "layout": "cards",
+        "catalog_keys": [
+          "bot"
+        ],
+        "intro": "Like the Masterment assistant? We can build one for your business.",
+        "note": "Already have a website? Masterment may be able to integrate a custom Business Bot directly into your existing site. Integration subject to technical compatibility. AI/API usage is subject to reasonable plan limits; high usage, premium integrations and third-party costs may be additional."
+      },
+      {
+        "id": "maintenance",
+        "title": "Website Management & Maintenance",
+        "items": [
+          "Content updates",
+          "Photo/video updates",
+          "Service/price updates",
+          "Minor design changes",
+          "Maintenance",
+          "Performance optimization",
+          "Technical support",
+          "Bot updates/integration"
+        ],
+        "note": "Support for existing websites, including sites built by others, when technically feasible."
+      },
+      {
+        "id": "network",
+        "title": "More Creative Solutions",
+        "items": [
+          "Video production in Cabo Verde",
+          "Video production in Portugal",
+          "Music production",
+          "Beat production",
+          "Mixing & mastering",
+          "Dancers",
+          "Creative talent",
+          "Custom programming",
+          "Other custom creative projects"
+        ],
+        "note": "Available directly through Masterment or coordinated through our creative network depending on the project. Availability and pricing require team confirmation."
+      }
+    ]
+  }
 }
