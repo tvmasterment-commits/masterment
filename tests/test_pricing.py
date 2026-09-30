@@ -44,6 +44,13 @@ class PricingTest(unittest.TestCase):
             self.assertIn(f'<h3>{label}</h3>', section)
         self.assertEqual(self.page.count('id="pricing-dialog"'), 1)
 
+    def test_public_action_icons_use_shared_svg_not_emoji(self):
+        self.assertNotIn('↗', self.page)
+        self.assertNotIn('&#8599;', self.page)
+        self.assertNotIn('⧉', self.page)
+        self.assertGreater(self.page.count('class="action-arrow"'), 30)
+        self.assertIn('class="services-pricing-icon" aria-hidden="true"><svg', self.page)
+
     def test_all_prices_match_shared_chat_source(self):
         for section in pricing_view(self.knowledge):
             for offer in section['offers']:

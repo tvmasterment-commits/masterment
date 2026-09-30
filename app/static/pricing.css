@@ -1,10 +1,12 @@
 /* Scoped to pricing; existing page and chat styles remain unchanged. */
-.services-pricing-trigger { display: block; width: min(100%, 300px); margin-top: 30px; padding: 19px 21px; border: 1px solid rgba(196,163,107,.35); background: rgba(196,163,107,.035); color: var(--paper); text-align: left; cursor: pointer; transition: border-color .2s ease, background .2s ease, color .2s ease; }
-.services-pricing-label { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 11px; letter-spacing: .18em; }
-.services-pricing-icon { color: var(--gold); font-size: 20px; line-height: 1; transition: transform .2s ease; }
-.services-pricing-caption { display: block; margin-top: 8px; color: var(--silver); font-size: 11px; letter-spacing: .015em; }
-.services-pricing-trigger:hover, .services-pricing-trigger:focus-visible { border-color: var(--gold-light); background: rgba(196,163,107,.075); color: var(--gold-light); }
-.services-pricing-trigger:hover .services-pricing-icon { transform: translate(1px, -1px); }
+.action-arrow { display: inline-block; width: 1em; height: 1em; vertical-align: -.12em; flex-shrink: 0; }
+.services-pricing-trigger { display: block; width: min(100%, 320px); margin: 34px auto 0; padding: 24px; border: 1px solid rgba(196,163,107,.65); background: linear-gradient(135deg, rgba(196,163,107,.085), rgba(196,163,107,.035)); color: var(--paper); text-align: left; cursor: pointer; transition: border-color .2s ease, background-color .2s ease, color .2s ease; }
+.services-pricing-label { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 14px; font-weight: 550; letter-spacing: .18em; }
+.services-pricing-icon { display: inline-flex; color: var(--gold-light); line-height: 1; transition: transform .2s ease; }
+.services-pricing-icon svg { width: 26px; height: 26px; }
+.services-pricing-caption { display: block; margin-top: 12px; color: var(--silver); font-size: 11px; line-height: 1.6; letter-spacing: .015em; }
+.services-pricing-trigger:hover, .services-pricing-trigger:focus-visible { border-color: var(--gold-light); background-color: rgba(196,163,107,.045); color: var(--gold-light); }
+.services-pricing-trigger:hover .services-pricing-icon { transform: translate(1px, -1px) scale(1.04); }
 @media (max-width: 760px) {
   #services .disciplines-intro { display: contents; }
   #services .disciplines-heading { grid-row: 1; }

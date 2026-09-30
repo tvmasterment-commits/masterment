@@ -32,7 +32,7 @@
           {% if offer.includes %}
           <details class="pricing-details"><summary>VIEW DETAILS</summary><ul>{% for item in offer.includes %}<li>{{ item }}</li>{% endfor %}</ul></details>
           {% endif %}
-          <button class="pricing-select" type="button" data-pricing-selection="{{ offer.selection }}" data-pricing-price="{{ offer.display_price }}" aria-label="Get started with {{ offer.name }}">GET STARTED <span aria-hidden="true">↗</span></button>
+          <button class="pricing-select" type="button" data-pricing-selection="{{ offer.selection }}" data-pricing-price="{{ offer.display_price }}" aria-label="Get started with {{ offer.name }}">GET STARTED <span aria-hidden="true">{% include '_action_arrow.html' %}</span></button>
         </article>
         {% endfor %}
       </div>
@@ -40,7 +40,7 @@
       <div class="pricing-custom">
         <p class="pricing-quote">CUSTOM QUOTE</p>
         <ul>{% for item in section['items'] %}<li>{{ item }}</li>{% endfor %}</ul>
-        <button class="pricing-select" type="button" data-pricing-selection="{{ section.title }}" data-pricing-price="Custom Quote">START A PROJECT <span aria-hidden="true">↗</span></button>
+        <button class="pricing-select" type="button" data-pricing-selection="{{ section.title }}" data-pricing-price="Custom Quote">START A PROJECT <span aria-hidden="true">{% include '_action_arrow.html' %}</span></button>
       </div>
       {% endif %}
       {% if section.note %}<p class="pricing-note">{{ section.note }}</p>{% endif %}
@@ -50,7 +50,7 @@
     <footer class="pricing-footer">
       <p class="pricing-eyebrow">LET’S MAKE IT HAPPEN</p>
       <h3>NOT SURE WHICH OPTION<br>FITS YOUR PROJECT?</h3>
-      <div class="pricing-actions"><a class="pricing-project" href="#contact">START A PROJECT <span aria-hidden="true">↗</span></a><button class="pricing-ask" type="button">ASK MASTERMENT <span aria-hidden="true">↗</span></button></div>
+      <div class="pricing-actions"><a class="pricing-project" href="#contact">START A PROJECT <span aria-hidden="true">{% include '_action_arrow.html' %}</span></a><button class="pricing-ask" type="button">ASK MASTERMENT <span aria-hidden="true">{% include '_action_arrow.html' %}</span></button></div>
     </footer>
   </div>
 </dialog>

@@ -41,7 +41,8 @@ const assert = require('node:assert/strict');
       assert.equal(await page.locator('#services li').count(), 6);
       assert.equal(await page.locator('#pricing-dialog').count(), 1);
       if (width > 760) {
-        assert(Math.abs(serviceTrigger.x - heading.x) < 1);
+        const column = await page.locator('.disciplines-intro').boundingBox();
+        assert(Math.abs(serviceTrigger.x + serviceTrigger.width / 2 - column.x - column.width / 2) < 1);
         assert(serviceTrigger.y >= heading.y + heading.height);
         assert(serviceTrigger.y < serviceList.y + serviceList.height);
         assert(serviceTrigger.x + serviceTrigger.width < serviceList.x);
@@ -49,6 +50,12 @@ const assert = require('node:assert/strict');
         assert(serviceTrigger.y >= serviceList.y + serviceList.height);
       }
       await page.screenshot({path: path.join(output, label + '-services.png')});
+      assert.equal(await page.locator('.services-pricing-icon svg').count(), 1);
+      const arrows = await page.locator('.action-arrow').evaluateAll(elements => elements.map(el => ({path: el.querySelector('path').getAttribute('d'), stroke: el.getAttribute('stroke-width')})));
+      assert(arrows.length > 30);
+      assert(arrows.every(icon => icon.path === arrows[0].path && icon.stroke === '1.6'));
+      const publicCopy = await page.evaluate(() => {const copy = document.body.cloneNode(true); copy.querySelector('#chat-widget').remove(); return copy.textContent;});
+      assert(!/[↗↖↘↙➡⬅⬆⬇⧉]/u.test(publicCopy));
       await page.locator('.services-pricing-trigger').click();
       assert.equal(await page.locator('#pricing-dialog').evaluate(el => el.open), true);
       await page.keyboard.press('Escape');
