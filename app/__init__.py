@@ -38,4 +38,6 @@ def create_app(test_config=None):
     init_db(app.config["DATABASE_PATH"])
     from .routes import bp
     app.register_blueprint(bp)
+    from .assets import configure_assets
+    configure_assets(app)
     return app

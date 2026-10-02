@@ -54,6 +54,12 @@ Optional browser regression checks use Playwright as a development tool and an i
 node tests/browser_pricing.cjs
 ```
 
+Performance verification and the saved local comparison are documented in `PERFORMANCE_REPORT.md`.
+Public HTML, CSS, and JavaScript negotiate gzip compression; videos retain byte-range support.
+Static URLs receive content hashes at application startup. Matching versions may be cached for a year;
+HTML, unversioned assets, and stale versions revalidate. Restart application workers whenever static
+files change so the URL hashes and precompressed files are refreshed. No production dependency was added.
+
 If Playwright is installed outside this project, set `NODE_PATH` to that installation's `node_modules` directory. `PYTHON` and `CHROME_PATH` can override the test executable paths. The test starts its own loopback-only Flask server on port 5057, uses an isolated database, and saves screenshots/results under ignored `.pricing-verification/`. It checks desktop, tablet, and two mobile viewport sizes, navigation, details, focus, scrolling, package handoff, local form submission, and the existing chatbot. There is no new runtime dependency.
 
 ## Production start

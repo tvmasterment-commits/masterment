@@ -413,8 +413,8 @@ class AppTest(unittest.TestCase):
         script = (root / "app/static/chat.js").read_text(encoding="utf-8-sig")
         for hook in ("/api/chat", "/api/conversations/", "sessionStorage", "textContent = text", "form.requestSubmit()"):
             self.assertIn(hook, script)
-        self.assertIn('/static/videos/hero-showreel.mp4', page)
-        self.assertIn('class="hero-video" autoplay muted loop playsinline', page)
+        self.assertIn('/static/videos/hero-showreel-web.mp4', page)
+        self.assertRegex(page, r'<video class="hero-video"[^>]* autoplay muted loop playsinline')
 
     def test_current_portfolio_media_and_profile_links_are_preserved(self):
         page = self.client.get("/").get_data(as_text=True)
@@ -423,10 +423,11 @@ class AppTest(unittest.TestCase):
         for number in (1, 3):
             self.assertIn(f'/static/videos/work/work-{number:02d}.mp4', page)
         for number in range(1, 10):
-            self.assertIn(f'/static/videos/reels/reels-{number}.mp4', page)
+            suffix = '.MP4' if number in (1, 2, 3, 5, 9) else '.mp4'
+            self.assertIn(f'/static/videos/reels/reels-{number}{suffix}', page)
         for url in ("https://youtube.com/@masterment", "https://www.instagram.com/master_ment", "https://www.instagram.com/kriolspirit/", "https://open.spotify.com/artist/", "https://music.apple.com/us/artist/masterment"):
             self.assertIn(url, page)
-        self.assertIn('class="project-video" autoplay muted loop playsinline', page)
+        self.assertRegex(page, r'<video class="project-video"[^>]* muted loop playsinline preload="none"')
 
     def test_current_customer_page_hierarchy_preserves_project_intake(self):
         page = self.client.get("/").get_data(as_text=True)

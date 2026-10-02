@@ -9,18 +9,18 @@
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   // Edit partner names and paths here when the logo set changes.
   const partnerLogos = [
-    {name: 'AweSound', path: '/static/images/partner-logos/partner-1.png'},
-    {name: 'Outside Films', path: '/static/images/partner-logos/partner-2.png'},
-    {name: 'Katxito Nation', path: '/static/images/partner-logos/partner-3.png'},
-    {name: 'MB', path: '/static/images/partner-logos/partner-4.png'},
-    {name: 'Dira Ricky', path: '/static/images/partner-logos/partner-5.png'},
-    {name: 'Kriol Spirit', path: '/static/images/partner-logos/partner-6.png'},
-    {name: 'ND', path: '/static/images/partner-logos/partner-7.png'},
-    {name: 'CH Films', path: '/static/images/partner-logos/partner-8.png'},
-    {name: 'Rootz Madrugz', path: '/static/images/partner-logos/partner-9.png'},
-    {name: 'DJ Maks', path: '/static/images/partner-logos/partner-10.png'},
-    {name: 'Partner 11', path: '/static/images/partner-logos/partner-11.png'},
-    {name: 'Partner 12', path: '/static/images/partner-logos/partner-12.png'},
+    {name: 'AweSound', path: '/static/images/partner-logos/partner-1.webp', width: 420, height: 151},
+    {name: 'Outside Films', path: '/static/images/partner-logos/partner-2.webp', width: 419, height: 195},
+    {name: 'Katxito Nation', path: '/static/images/partner-logos/partner-3.webp', width: 420, height: 195},
+    {name: 'MB', path: '/static/images/partner-logos/partner-4.webp', width: 201, height: 195},
+    {name: 'Dira Ricky', path: '/static/images/partner-logos/partner-5.webp', width: 420, height: 138},
+    {name: 'Kriol Spirit', path: '/static/images/partner-logos/partner-6.webp', width: 420, height: 142},
+    {name: 'ND', path: '/static/images/partner-logos/partner-7.webp', width: 292, height: 195},
+    {name: 'CH Films', path: '/static/images/partner-logos/partner-8.webp', width: 340, height: 195},
+    {name: 'Rootz Madrugz', path: '/static/images/partner-logos/partner-9.webp', width: 420, height: 166},
+    {name: 'DJ Maks', path: '/static/images/partner-logos/partner-10.webp', width: 203, height: 195},
+    {name: 'Partner 11', path: '/static/images/partner-logos/partner-11.webp', width: 366, height: 195},
+    {name: 'Partner 12', path: '/static/images/partner-logos/partner-12.webp', width: 292, height: 195},
   ];
   if (heroVideo) {
     const syncHeroMotion = () => {
@@ -52,14 +52,9 @@
   const partnerMarquee = document.querySelector('.about-partner-marquee');
   const partnerTrack = partnerMarquee?.querySelector('.about-partner-track');
   if (partnerMarquee && partnerTrack && partnerLogos.length) {
-    const loadPartnerLogo = (logo) => new Promise((resolve) => {
-      const image = new Image();
-      const src = logo.path;
-      image.onload = () => resolve({...logo, src});
-      image.onerror = () => resolve(null);
-      image.src = src;
-    });
-    Promise.all(partnerLogos.map(loadPartnerLogo)).then((results) => {
+    // Build fixed-size frames immediately; native lazy loading defers offscreen images.
+    const sources = [...partnerMarquee.querySelectorAll('[data-partner-src]')];
+    Promise.resolve(partnerLogos.map((logo, index) => ({...logo, src: sources[index]?.dataset.partnerSrc || logo.path}))).then((results) => {
       const availableLogos = results.filter(Boolean);
       if (!availableLogos.length) return;
 
@@ -76,6 +71,10 @@
           const frame = document.createElement('span');
           frame.className = frameClass;
           const image = document.createElement('img');
+          image.loading = 'lazy';
+          image.decoding = 'async';
+          image.width = logo.width;
+          image.height = logo.height;
           image.src = logo.src;
           image.alt = isAccessible ? logo.name : '';
           image.draggable = false;
@@ -161,8 +160,10 @@
     if (video.currentTime < start || video.currentTime >= end) video.currentTime = start;
   };
   const loadProjectVideo = (video) => {
+    if (video.dataset.poster && !video.poster) video.poster = video.dataset.poster;
     const source = video.querySelector('source[data-src]');
     if (source && !source.hasAttribute('src')) {
+      video.preload = 'metadata';
       source.src = source.dataset.src;
       video.load();
     }
@@ -170,19 +171,24 @@
   const setProjectVideoNear = (video, isNear) => {
     if (isNear) {
       nearbyProjectVideos.add(video);
-      video.autoplay = !reducedMotion.matches;
+      video.autoplay = !reducedMotion.matches && !document.hidden;
       loadProjectVideo(video);
-      if (reducedMotion.matches || video.error) video.pause();
+      if (reducedMotion.matches || document.hidden || video.error) video.pause();
       else {
         seekProjectHighlight(video);
         video.play().catch(() => {});
       }
     } else {
       nearbyProjectVideos.delete(video);
+      video.autoplay = false;
       video.pause();
     }
   };
   projectVideos.forEach((video) => {
+    video.autoplay = false;
+    video.addEventListener('playing', () => {
+      if (!nearbyProjectVideos.has(video) || reducedMotion.matches || document.hidden) video.pause();
+    });
     const art = video.closest('.portfolio-art');
     const fallback = art?.querySelector('.project-video-fallback');
     const showFallback = () => {
@@ -192,29 +198,37 @@
     video.addEventListener('error', showFallback, { once: true });
     video.addEventListener('loadedmetadata', () => {
       seekProjectHighlight(video);
-      if (nearbyProjectVideos.has(video) && !reducedMotion.matches && !video.error) video.play().catch(() => {});
+      if (nearbyProjectVideos.has(video) && !reducedMotion.matches && !document.hidden && !video.error) video.play().catch(() => {});
     });
     video.addEventListener('timeupdate', () => {
       const end = Number(video.dataset.highlightEnd);
       if (!Number.isFinite(end) || video.currentTime < end) return;
       const start = Number(video.dataset.highlightStart);
       video.currentTime = start;
-      if (nearbyProjectVideos.has(video) && !reducedMotion.matches && !video.error) video.play().catch(() => {});
+      if (nearbyProjectVideos.has(video) && !reducedMotion.matches && !document.hidden && !video.error) video.play().catch(() => {});
     });
     if (video.error) showFallback();
   });
   if ('IntersectionObserver' in window) {
+    const preparation = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        loadProjectVideo(entry.target);
+        preparation.unobserve(entry.target);
+      });
+    }, {rootMargin: '120px 0px'});
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => setProjectVideoNear(entry.target, entry.isIntersecting));
-    }, {rootMargin: '220px 0px'});
-    projectVideos.forEach((video) => videoObserver.observe(video));
+    });
+    projectVideos.forEach((video) => { preparation.observe(video); videoObserver.observe(video); });
   } else {
     let videoCheckPending = false;
     const checkProjectVideoProximity = () => {
       videoCheckPending = false;
       projectVideos.forEach((video) => {
         const bounds = video.getBoundingClientRect();
-        setProjectVideoNear(video, bounds.bottom >= -220 && bounds.top <= window.innerHeight + 220);
+        if (bounds.bottom >= -120 && bounds.top <= window.innerHeight + 120) loadProjectVideo(video);
+        setProjectVideoNear(video, bounds.bottom > 0 && bounds.top < window.innerHeight);
       });
     };
     const scheduleProjectVideoCheck = () => {
@@ -233,6 +247,15 @@
       else video.pause();
     });
   });
+  document.addEventListener('visibilitychange', () => {
+    projectVideos.forEach((video) => {
+      if (nearbyProjectVideos.has(video)) setProjectVideoNear(video, true);
+    });
+  });
+  window.addEventListener('pagehide', () => projectVideos.forEach((video) => video.pause()));
+  window.addEventListener('pageshow', () => projectVideos.forEach((video) => {
+    if (nearbyProjectVideos.has(video)) setProjectVideoNear(video, true);
+  }));
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     items.forEach((item) => item.classList.add('is-visible'));
   } else {

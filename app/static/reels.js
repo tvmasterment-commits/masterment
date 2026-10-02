@@ -2,6 +2,18 @@
   const videos = [...document.querySelectorAll('.reels-video')];
   if (!videos.length) return;
   const nearby = new Set();
+  const prepare = (video) => {
+    if (video.dataset.poster && !video.poster) video.poster = video.dataset.poster;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    const source = video.querySelector('source[data-src]');
+    if (source && !source.hasAttribute('src')) {
+      video.preload = 'metadata';
+      source.src = source.dataset.src;
+      video.load();
+    }
+  };
   const shouldPlay = (video) => nearby.has(video) && !document.hidden;
   const sync = (video) => {
     if (!shouldPlay(video)) {
@@ -14,11 +26,7 @@
     video.defaultMuted = true;
     video.playsInline = true;
     video.autoplay = true;
-    const source = video.querySelector('source[data-src]');
-    if (source && !source.hasAttribute('src')) {
-      source.src = source.dataset.src;
-      video.load();
-    }
+    prepare(video);
     const playback = video.play();
     playback?.then(() => {
       // A pending play request may resolve after the Reel leaves the viewport.
@@ -38,17 +46,25 @@
     sync(video);
   };
   if ('IntersectionObserver' in window) {
+    const preparation = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        prepare(entry.target);
+        preparation.unobserve(entry.target);
+      });
+    }, { rootMargin: '120px 0px', threshold: 0 });
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => setNear(entry.target, entry.isIntersecting));
-    }, { rootMargin: '200px 0px', threshold: 0 });
-    videos.forEach((video) => observer.observe(video));
+    }, { threshold: 0 });
+    videos.forEach((video) => { preparation.observe(video); observer.observe(video); });
   } else {
     let scheduled = false;
     const check = () => {
       scheduled = false;
       videos.forEach((video) => {
         const rect = video.getBoundingClientRect();
-        setNear(video, rect.bottom >= -200 && rect.top <= window.innerHeight + 200);
+        if (rect.bottom >= -120 && rect.top <= window.innerHeight + 120) prepare(video);
+        setNear(video, rect.bottom > 0 && rect.top < window.innerHeight);
       });
     };
     const schedule = () => {

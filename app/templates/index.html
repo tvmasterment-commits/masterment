@@ -6,8 +6,9 @@
   <meta name="theme-color" content="#090a0b">
   <meta name="description" content="Masterment is a creative production company working across music, film, photography, events, culture and visual identity.">
   <title>MASTERMENT | Creative Production</title>
-  <link rel="preload" as="image" href="{{ url_for('static', filename='images/masterment-logo.png') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='about-final-copy-20260928') }}">
+  <link rel="preload" as="image" fetchpriority="high" href="{{ url_for('static', filename='images/masterment-logo-336.webp') }}">
+  <link rel="preload" as="image" fetchpriority="high" href="{{ url_for('static', filename='images/posters/hero.webp') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='performance') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='reels.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='chat-widget.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='pricing.css') }}">
@@ -16,7 +17,7 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <a class="brand" href="#home" aria-label="Masterment home">
-      <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="Masterment Creative Production">
+      <img src="{{ url_for('static', filename='images/masterment-logo-336.webp') }}" width="336" height="336" fetchpriority="high" alt="Masterment Creative Production">
     </a>
     <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
       <span></span><span></span>
@@ -32,8 +33,8 @@
 
   <main id="main-content">
     <section class="hero section-shell" id="home" aria-labelledby="hero-title">
-      <video class="hero-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
-        <source src="{{ url_for('static', filename='videos/hero-showreel.mp4') }}" type="video/mp4">
+      <video class="hero-video" poster="{{ url_for('static', filename='images/posters/hero.webp') }}" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+        <source src="{{ url_for('static', filename='videos/hero-showreel-web.mp4') }}" type="video/mp4">
       </video>
       <div class="hero-video-overlay" aria-hidden="true"></div>
       <div class="hero-content">
@@ -62,15 +63,15 @@
         <div class="reels-gallery" aria-label="Reels 1?3">
           {% for number in range(1, 4) %}
           <div class="reels-frame">
-            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
         </div>
         <article class="portfolio-card portfolio-memories reveal">
           <div class="portfolio-art art-one">
-            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="BALA — Giiio, Priest, Ashley, Raff Luke">
+            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/work-01.webp') }}" muted loop playsinline preload="none" aria-label="BALA — Giiio, Priest, Ashley, Raff Luke">
               <source data-src="{{ url_for('static', filename='videos/work/work-01.mp4') }}" type="video/mp4">
               Your browser does not support HTML5 video.
             </video>
@@ -80,8 +81,8 @@
         <div class="reels-gallery" aria-label="Reels 4?6">
           {% for number in range(4, 7) %}
           <div class="reels-frame">
-            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
@@ -89,15 +90,15 @@
         <div class="reels-gallery" aria-label="Reels 7?9">
           {% for number in range(7, 10) %}
           <div class="reels-frame">
-            <video class="reels-video" autoplay muted loop playsinline preload="metadata" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ '.mp4') }}" type="video/mp4">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
         </div>
         <article class="portfolio-card portfolio-bala reveal">
           <div class="portfolio-art art-three">
-            <video class="project-video" autoplay muted loop playsinline preload="metadata" aria-label="MEMORIES #1 — Raff Luke, RhymesK, XA">
+            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/work-03.webp') }}" muted loop playsinline preload="none" aria-label="MEMORIES #1 — Raff Luke, RhymesK, XA">
               <source data-src="{{ url_for('static', filename='videos/work/work-03.mp4') }}" type="video/mp4">
               Your browser does not support HTML5 video.
             </video>
@@ -144,7 +145,7 @@
               <span class="about-headline-accent">MUSIC.</span>
             </h2>
             <div class="about-logo">
-              <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="Masterment">
+              <img src="{{ url_for('static', filename='images/masterment-logo-1254.webp') }}" width="1254" height="1254" loading="lazy" decoding="async" alt="Masterment">
             </div>
           </div>
           <div class="about-story">
@@ -156,6 +157,7 @@
         </div>
         <div class="about-partner-marquee" aria-label="Partner logos" hidden>
           <div class="about-partner-track"></div>
+          {% for number in range(1, 13) %}<template data-partner-src="{{ url_for('static', filename='images/partner-logos/partner-' ~ number ~ '.webp') }}"></template>{% endfor %}
         </div>
       </div>
     </section>
@@ -205,7 +207,7 @@
       <section class="conversation" id="chat-panel" role="dialog" hidden tabindex="-1" aria-labelledby="conversation-title">
         <div class="conversation-heading">
           <button class="chat-close" type="button" aria-label="Minimize chat">&times;</button>
-          <div class="conversation-brand"><img class="brand-symbol" src="{{ url_for('static', filename='images/masterment-logo.png') }}" width="22" height="22" alt="" aria-hidden="true"><span>MASTERMENT</span></div>
+          <div class="conversation-brand"><img class="brand-symbol" src="{{ url_for('static', filename='images/masterment-logo-336.webp') }}" width="22" height="22" alt="" aria-hidden="true"><span>MASTERMENT</span></div>
           <h3 id="conversation-title">Welcome to Masterment.</h3>
           <p>Tell us about what you're looking to create.
             <span class="conversation-helper">Ask about pricing, packages, websites, Business Bots, video production, events, weddings, real estate, or custom projects.</span>
@@ -232,7 +234,7 @@
         <p class="conversation-note">Your message will be shared with the Masterment team.</p>
       </section>
     <button class="chat-toggle" type="button" aria-controls="chat-panel" aria-expanded="false" aria-label="Open Masterment chat">
-      <img src="{{ url_for('static', filename='images/masterment-logo.png') }}" alt="" aria-hidden="true">
+      <img src="{{ url_for('static', filename='images/masterment-logo-336.webp') }}" alt="" aria-hidden="true">
       <svg class="chat-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
     </button>
   </div>
