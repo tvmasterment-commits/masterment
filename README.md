@@ -22,6 +22,7 @@ Set these values in `.env` for local use:
 - `ADMIN_USERNAME` and `ADMIN_PASSWORD`: dashboard credentials. Production requires a non-default password of at least 16 characters.
 - `FLASK_SECRET_KEY`: Flask signing key. Generate one with `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Production requires at least 32 characters.
 - `DATABASE_PATH`: SQLite file path; default `instance/masterment.sqlite3`.
+- `DATABASE_URL`: optional PostgreSQL connection URL from environment; takes precedence over `DATABASE_PATH`. Leave empty for local SQLite. Credentials must remain in environment configuration.
 - `PORT`: local development port; default `5000`.
 
 Replace the placeholders in `knowledge/business.json` with approved company information. Never put actual credentials in `.env.example` or source control. `.env` is gitignored.

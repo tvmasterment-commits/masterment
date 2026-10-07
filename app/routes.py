@@ -4,7 +4,7 @@ import hmac
 import uuid
 from functools import wraps
 from flask import Blueprint, current_app, jsonify, render_template, request, Response, session, abort
-from .db import connect, ensure_conversation, add_message, upsert_lead
+from .db import connect, ensure_conversation, add_message, upsert_lead, database_target, now
 from .assistant import extract_from_history, generate_reply, read_knowledge
 from .limiter import check_rate_limit
 from .pricing import pricing_view
@@ -56,7 +56,7 @@ def direct_contact():
     if not re.fullmatch(r"[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+", fields["email"]):
         return jsonify(error="Please enter a valid email address."), 400
     try:
-        with connect(current_app.config["DATABASE_PATH"]) as db:
+        with connect(database_target(current_app.config)) as db:
             conversation_id = str(uuid.uuid4())
             ensure_conversation(db, conversation_id)
             upsert_lead(db, conversation_id, {
@@ -116,7 +116,7 @@ def chat_session():
 def conversation_history(conversation_id):
     if not re.fullmatch(r"[a-f0-9-]{36}", conversation_id, re.I):
         return jsonify(error="Invalid conversation."), 400
-    with connect(current_app.config["DATABASE_PATH"]) as db:
+    with connect(database_target(current_app.config)) as db:
         from .security import visitor_hash
         exists = db.execute("SELECT 1 FROM conversations WHERE id=? AND owner_hash=?", (conversation_id,visitor_hash())).fetchone()
         if not exists: return jsonify(error="Conversation not found."), 404
@@ -128,7 +128,7 @@ def conversation_history(conversation_id):
 @bp.get("/admin")
 @admin_required
 def admin():
-    with connect(current_app.config["DATABASE_PATH"]) as db:
+    with connect(database_target(current_app.config)) as db:
         leads = db.execute("SELECT * FROM leads ORDER BY created_at DESC").fetchall()
     return render_template("admin.html", leads=leads, statuses=STATUSES)
 
@@ -136,7 +136,7 @@ def admin():
 @admin_required
 def lead_detail(lead_id):
     csrf_token = session.setdefault("admin_csrf_token", secrets.token_urlsafe(32))
-    with connect(current_app.config["DATABASE_PATH"]) as db:
+    with connect(database_target(current_app.config)) as db:
         lead = db.execute("SELECT * FROM leads WHERE id=?", (lead_id,)).fetchone()
         if not lead: return "Lead not found", 404
         messages = db.execute("SELECT id,role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (lead["conversation_id"],)).fetchall()
@@ -154,8 +154,8 @@ def update_status(lead_id):
         return jsonify(error="A JSON object is required."), 400
     status = payload.get("status")
     if status not in STATUSES: return jsonify(error="Invalid status"), 400
-    with connect(current_app.config["DATABASE_PATH"]) as db:
-        cur = db.execute("UPDATE leads SET status=?,updated_at=datetime('now') WHERE id=?", (status, lead_id))
+    with connect(database_target(current_app.config)) as db:
+        cur = db.execute("UPDATE leads SET status=?,updated_at=? WHERE id=?", (status, now(), lead_id))
         if cur.rowcount == 0: return jsonify(error="Lead not found"), 404
     if request.is_json: return jsonify(status=status)
     from flask import redirect, url_for

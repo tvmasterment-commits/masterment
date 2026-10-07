@@ -3,7 +3,7 @@ import secrets
 from pathlib import Path
 from flask import Flask
 from dotenv import load_dotenv
-from .db import init_db
+from .db import init_db, database_target, backend
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,6 +26,7 @@ def create_app(test_config=None):
         SESSION_COOKIE_SECURE=production,
         MAX_CONTENT_LENGTH=16 * 1024,
         DATABASE_PATH=os.getenv("DATABASE_PATH", str(BASE_DIR / "instance" / "masterment.sqlite3")),
+        DATABASE_URL=os.getenv('DATABASE_URL', '').strip(),
         KNOWLEDGE_PATH=str(BASE_DIR / "knowledge" / "business.json"),
         ADMIN_USERNAME=admin_username,
         ADMIN_PASSWORD=admin_password,
@@ -35,11 +36,16 @@ def create_app(test_config=None):
     )
     if test_config:
         app.config.update(test_config)
-    Path(app.config["DATABASE_PATH"]).parent.mkdir(parents=True, exist_ok=True)
-    init_db(app.config["DATABASE_PATH"])
-    if app.config['AUTO_MIGRATE']:
-        from .migrations import migrate
-        migrate(app.config['DATABASE_PATH'])
+        if 'DATABASE_PATH' in test_config and 'DATABASE_URL' not in test_config:
+            app.config['DATABASE_URL'] = ''
+    target = database_target(app.config)
+    from .migrations import migrate, validate_schema
+    if backend(target) == 'sqlite' and not production:
+        Path(target).parent.mkdir(parents=True, exist_ok=True)
+        init_db(target)
+        if app.config['AUTO_MIGRATE']: migrate(target)
+    else:
+        validate_schema(target)
     from .routes import bp
     app.register_blueprint(bp)
     from .assets import configure_assets

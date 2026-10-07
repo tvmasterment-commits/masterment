@@ -1,6 +1,8 @@
 (() => {
   const videos = [...document.querySelectorAll('.reels-video, .project-video')];
   if (!videos.length) return;
+  if (videos[0].dataset.schedulerReady) return;
+  videos.forEach(video => { video.dataset.schedulerReady = 'true'; });
   const motion = matchMedia('(prefers-reduced-motion: reduce)');
   const highlights = {'work-01': [20, 32], 'work-03': [25, 37]};
   const visible = new Set();
@@ -8,8 +10,10 @@
   let starting = null;
   let timer = null;
   let suspended = false;
+  const attempts = new WeakMap();
+  const pendingPlay = new WeakSet();
   const isProject = video => video.classList.contains('project-video');
-  const allowed = video => visible.has(video) && !document.hidden && !suspended && !(isProject(video) && motion.matches);
+  const allowed = video => visible.has(video) && !document.hidden && !suspended && !video.dataset.userPaused && !(isProject(video) && motion.matches && !video.dataset.userActivated);
   const poster = video => {
     const image = video.parentElement.querySelector('.portfolio-poster');
     if (image && !image.hasAttribute('src')) image.src = image.dataset.src;
@@ -22,8 +26,19 @@
     pump();
   };
   const play = video => {
-    if (!allowed(video)) return;
-    video.play()?.then(() => { if (!allowed(video)) video.pause(); }).catch(() => finish(video));
+    if (!allowed(video) || pendingPlay.has(video)) return;
+    const attempt = attempts.get(video);
+    pendingPlay.add(video);
+    video.play()?.then(() => {
+      if (attempt !== attempts.get(video)) return;
+      if (!allowed(video)) video.pause();
+    }).catch(error => {
+      if (attempt !== attempts.get(video)) return;
+      if (error.name !== 'AbortError') video.parentElement.querySelector('.portfolio-play').hidden = false;
+      finish(video);
+    }).finally(() => {
+      if (attempt === attempts.get(video)) pendingPlay.delete(video);
+    });
   };
   const start = video => {
     starting = video;
@@ -55,6 +70,41 @@
     pump();
   };
   videos.forEach(video => {
+    attempts.set(video, 0);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'portfolio-play';
+    button.textContent = 'Play video';
+    button.setAttribute('aria-label', `Play ${video.getAttribute('aria-label') || 'portfolio video'}`);
+    button.hidden = true;
+    video.parentElement.append(button);
+    const activate = () => {
+      video.dataset.userActivated = 'true';
+      delete video.dataset.userPaused;
+      visible.add(video);
+      const source = video.querySelector('source[data-src]');
+      if (!source.hasAttribute('src') || video.error) {
+        attempts.set(video, attempts.get(video) + 1);
+        pendingPlay.delete(video);
+        source.src = source.dataset.src;
+        video.load();
+      }
+      poster(video);
+      play(video); // Called directly during the gesture for autoplay-restricted browsers.
+    };
+    button.addEventListener('click', activate);
+    video.tabIndex = 0;
+    video.addEventListener('click', () => {
+      if (!video.paused) {
+        video.dataset.userPaused = 'true';
+        video.pause();
+        button.hidden = false;
+        finish(video);
+      } else activate();
+    });
+    video.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); video.click(); }
+    });
     video.autoplay = false;
     video.addEventListener('loadedmetadata', () => {
       const id = video.querySelector('source').dataset.src.match(/work-0[13]/)?.[0];
@@ -70,6 +120,7 @@
     video.addEventListener('playing', () => {
       if (!allowed(video)) { video.pause(); return; }
       video.parentElement.classList.add('portfolio-playing');
+      button.hidden = true;
       finish(video);
     });
     video.addEventListener('timeupdate', () => {
@@ -78,6 +129,7 @@
       if (end && video.currentTime >= end) { video.currentTime = Number(video.dataset.highlightStart); play(video); }
     });
     video.addEventListener('error', () => {
+      button.hidden = false;
       video.parentElement.classList.remove('portfolio-playing');
       const fallback = video.parentElement.querySelector('.project-video-fallback');
       if (fallback) fallback.hidden = false;
@@ -96,6 +148,8 @@
       if (bounds.bottom < -600 || bounds.top > innerHeight + 600) {
         const source = video.querySelector('source');
         if (source.hasAttribute('src')) {
+          attempts.set(video, attempts.get(video) + 1);
+          pendingPlay.delete(video);
           video.dataset.resumeAt = String(video.currentTime);
           video.pause();
           source.removeAttribute('src');

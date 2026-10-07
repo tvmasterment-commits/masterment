@@ -4,7 +4,7 @@ import json
 import logging
 import uuid
 from flask import current_app
-from .db import connect, ensure_conversation, add_message, upsert_lead, now
+from .db import connect, ensure_conversation, add_message, upsert_lead, now, database_target
 from .assistant import read_knowledge, model_understanding, render_reply
 from .intelligence import deterministic_updates, evidence_updates, decision
 
@@ -29,20 +29,20 @@ def save_intelligence(db,cid,revision,lead,updates,derived,evidence):
             'package_id':updates.get('package_id',lead.get('package_id')),'field_evidence':json.dumps(evidence), 'updated_at':now()}
     db.execute('UPDATE leads SET '+','.join(k+'=?' for k in fields)+' WHERE conversation_id=?',(*fields.values(),cid))
     if previous!=derived['sales_status']:
-        db.execute('INSERT OR IGNORE INTO sales_transitions(conversation_id,revision,from_state,to_state,intent,created_at) VALUES (?,?,?,?,?,?)',
+        db.execute('INSERT INTO sales_transitions(conversation_id,revision,from_state,to_state,intent,created_at) VALUES (?,?,?,?,?,?) ON CONFLICT(conversation_id,revision) DO NOTHING',
                    (cid,revision,previous,derived['sales_status'],derived['sales_intent'],now()))
         log.info('sales_transition revision=%s from=%s to=%s',revision,previous,derived['sales_status'])
 
 
 def chat_turn(message,cid,request_id,owner):
-    path=current_app.config['DATABASE_PATH']
+    path=database_target(current_app.config)
     knowledge=read_knowledge(current_app.config['KNOWLEDGE_PATH'])
     input_hash=hashlib.sha256(message.encode()).hexdigest()
     # Legacy clients without request IDs get content-based replay; current clients
     # always send a fresh UUID per deliberate message and retain it across retries.
     request_id=request_id or str(uuid.uuid5(uuid.NAMESPACE_URL,owner+':'+str(cid)+':'+message))
     with connect(path) as db:
-        db.execute('BEGIN IMMEDIATE')
+        db.begin_write()
         existing=db.execute('SELECT * FROM chat_requests WHERE request_id=?',(request_id,)).fetchone()
         if existing:
             if existing['owner_hash']!=owner or existing['input_hash']!=input_hash or (cid and cid!=existing['conversation_id']):
@@ -60,8 +60,7 @@ def chat_turn(message,cid,request_id,owner):
             conversation=owned(db,cid,owner)
         revision=conversation['revision']+1
         db.execute('UPDATE conversations SET revision=? WHERE id=?',(revision,cid))
-        add_message(db,cid,'user',message)
-        message_id=db.execute('SELECT last_insert_rowid()').fetchone()[0]
+        message_id=add_message(db,cid,'user',message)
         history=[dict(row) for row in db.execute('SELECT id,role,content FROM messages WHERE conversation_id=? ORDER BY id DESC',(cid,))][::-1]
         row=db.execute('SELECT * FROM leads WHERE conversation_id=?',(cid,)).fetchone()
         lead=dict(row) if row else {}
@@ -78,10 +77,10 @@ def chat_turn(message,cid,request_id,owner):
         db.execute('INSERT INTO chat_requests(request_id,conversation_id,owner_hash,input_hash,revision,user_message_id,created_at) VALUES (?,?,?,?,?,?,?)',
                    (request_id,cid,owner,input_hash,revision,message_id,now()))
         lead={**merged,**derived}
-    # No SQLite connection/transaction remains open during this external call.
+    # No database connection/transaction remains open during this external call.
     result=model_understanding(history,lead,knowledge)
     with connect(path) as db:
-        db.execute('BEGIN IMMEDIATE')
+        db.begin_write()
         conversation=owned(db,cid,owner)
         if conversation['revision']!=revision:
             response={'conversation_id':cid,'request_id':request_id,'revision':revision,'stale':True,
@@ -95,8 +94,7 @@ def chat_turn(message,cid,request_id,owner):
         derived=decision(history,merged,knowledge,result)
         save_intelligence(db,cid,revision,lead,updates,derived,evidence)
         reply=render_reply(history,{**merged,**derived},knowledge,result)
-        add_message(db,cid,'assistant',reply)
-        assistant_message_id=db.execute('SELECT last_insert_rowid()').fetchone()[0]
+        assistant_message_id=add_message(db,cid,'assistant',reply)
         saved=db.execute('SELECT * FROM leads WHERE conversation_id=?',(cid,)).fetchone()
         response={'conversation_id':cid,'request_id':request_id,'revision':revision,'reply':reply,'assistant_message_id':assistant_message_id,
                   'captured':{field:saved[field] for field in LEAD_FIELDS if saved[field]},'status':saved['status']}
