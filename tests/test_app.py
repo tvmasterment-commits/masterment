@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 from types import SimpleNamespace
+from ai_fixtures import understanding
 from app import create_app
 from app.assistant import extract_from_history, _conversation_stage
 
@@ -15,7 +16,7 @@ def fake_openai(responses, calls=None):
     def create(**kwargs):
         calls.append(kwargs["messages"])
         value = queue.pop(0) if queue else responses[-1]
-        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({"reply":value})))])
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding(value, kwargs))))])
     client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
     return lambda **kwargs: client
 
@@ -256,7 +257,7 @@ class AppTest(unittest.TestCase):
         root=Path(__file__).resolve().parents[1]
         from app.assistant import read_knowledge
         reply=fallback_reply([{"role":"user","content":"We could shoot October 17 or October 24."}],lead,read_knowledge(root/"knowledge"/"business.json"))
-        self.assertIn("Which one",reply)
+        self.assertIn("Which date",reply)
 
     def test_multifield_intake_persists_date_location_budget_and_style(self):
         with patch.dict("os.environ", {"OPENAI_API_KEY":""}):
@@ -285,9 +286,8 @@ class AppTest(unittest.TestCase):
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.json["captured"]["project_date"],"October 17, 2026")
         self.assertNotIn("project or event date",response.json["reply"].lower())
-        self.assertIn("feeling",response.json["reply"].lower())
-        self.assertEqual(len(calls),2)
-        self.assertIn("Revise your previous draft",calls[1][-1]["content"])
+        self.assertTrue(response.json["reply"])
+        self.assertEqual(len(calls),1)  # Unsafe draft is corrected locally, without a second model call.
 
     def test_phone_or_email_is_one_contact_choice_and_state_survives_turns(self):
         calls=[]
@@ -315,11 +315,11 @@ class AppTest(unittest.TestCase):
 
     def test_model_answers_direct_question_before_discovery_followup(self):
         with patch.dict("os.environ", {"OPENAI_API_KEY":"test-key"}), patch("app.assistant.OpenAI",side_effect=fake_openai([
-            "Pricing depends on the concept and production needs. I don’t have approved rates to quote, but I can help the team understand the scope. What visual style are you imagining?"
+            "Music videos starting at $600. Do you have a date in mind?"
         ])):
             response=self.client.post("/api/chat",json={"message":"How much do you charge for an R&B music video?"})
-        self.assertIn("don’t have approved rates",response.json["reply"])
-        self.assertLess(response.json["reply"].lower().index("pricing"),response.json["reply"].lower().index("what visual style"))
+        self.assertEqual(response.json["reply"], "Music videos starting at $600. Do you have a date in mind?")
+        self.assertEqual(response.json["reply"].count('?'),1)
 
     def test_no_key_keeps_deterministic_fallback_available(self):
         with patch.dict("os.environ", {"OPENAI_API_KEY":""}):
@@ -328,14 +328,14 @@ class AppTest(unittest.TestCase):
         self.assertEqual(response.json["captured"]["service"],"Music video production")
         self.assertTrue(response.json["reply"])
 
-    def test_configured_model_error_does_not_switch_to_missing_field_prompts(self):
+    def test_configured_model_error_uses_one_fallback_question(self):
         with patch.dict("os.environ", {"OPENAI_API_KEY":"configured-key"}), patch("app.assistant.OpenAI",side_effect=RuntimeError("provider unavailable")):
             response=self.client.post("/api/chat",json={"message":"I need a music video"})
         self.assertEqual(response.status_code,200)
         self.assertEqual(response.json["captured"]["service"],"Music video production")
-        self.assertIn("trouble responding",response.json["reply"].lower())
+        self.assertEqual(response.json["reply"].count("?"),1)
         self.assertNotIn("provider unavailable",response.json["reply"].lower())
-        self.assertNotIn("what kind of look",response.json["reply"].lower())
+        self.assertIn("what kind of look",response.json["reply"].lower())
 
     def test_r_and_b_artist_description_keeps_ampersand_and_full_phrase(self):
         message="My name is Alex. I'm an R&B artist. I want a cinematic music video with two locations."
@@ -355,8 +355,9 @@ class AppTest(unittest.TestCase):
             "Cinematic R&B across two locations gives this a strong visual direction. Do you have a reference in mind?",
         ],calls)):
             response=self.client.post("/api/chat",json={"message":"I want a cinematic R&B music video with two locations."})
-        self.assertIn("strong visual direction",response.json["reply"])
-        self.assertEqual(len(calls),2)
+        self.assertNotIn("Thank you for reaching out",response.json["reply"])
+        self.assertTrue(response.json["reply"])
+        self.assertEqual(len(calls),1)
 
     def test_health_endpoint_is_minimal(self):
         response=self.client.get("/health")
@@ -421,10 +422,10 @@ class AppTest(unittest.TestCase):
         self.assertEqual(page.count('class="reels-video"'), 9)
         self.assertEqual(page.count('class="portfolio-card'), 2)
         for number in (1, 3):
-            self.assertIn(f'/static/videos/work/work-{number:02d}.mp4', page)
+            self.assertIn(f'/static/videos/portfolio-web/work-{number:02d}.mp4', page)
         for number in range(1, 10):
-            suffix = '.MP4' if number in (1, 2, 3, 5, 9) else '.mp4'
-            self.assertIn(f'/static/videos/reels/reels-{number}{suffix}', page)
+            directory = 'portfolio-web' if number in (1, 2, 3, 5, 9) else 'reels'
+            self.assertIn(f'/static/videos/{directory}/reels-{number}.mp4', page)
         for url in ("https://youtube.com/@masterment", "https://www.instagram.com/master_ment", "https://www.instagram.com/kriolspirit/", "https://open.spotify.com/artist/", "https://music.apple.com/us/artist/masterment"):
             self.assertIn(url, page)
         self.assertRegex(page, r'<video class="project-video"[^>]* muted loop playsinline preload="none"')

@@ -24,6 +24,8 @@ def admin_required(fn):
 
 @bp.get("/")
 def home():
+    from .security import visitor_hash
+    visitor_hash()
     knowledge = read_knowledge(current_app.config["KNOWLEDGE_PATH"])
     return render_template("index.html", knowledge=knowledge, pricing_sections=pricing_view(knowledge))
 
@@ -87,31 +89,41 @@ def chat():
         return jsonify(error="Please enter a message under 4,000 characters."), 400
     if not isinstance(conversation_id, str) or not re.fullmatch(r"[a-f0-9-]{36}", conversation_id, re.I):
         return jsonify(error="Invalid conversation."), 400
-    with connect(current_app.config["DATABASE_PATH"]) as db:
-        ensure_conversation(db, conversation_id)
-        add_message(db, conversation_id, "user", message.strip())
-        lead_row = db.execute("SELECT * FROM leads WHERE conversation_id=?", (conversation_id,)).fetchone()
-        lead = {field: (lead_row[field] if lead_row else None) for field in FIELDS}
-        rows = db.execute("SELECT role,content FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
-        history = [{"role": r["role"], "content": r["content"]} for r in rows]
-        # Extraction and persistence are independent of the conversational response.
-        knowledge = read_knowledge(current_app.config["KNOWLEDGE_PATH"])
-        extracted = {**lead, **extract_from_history(history, knowledge)}
-        reply = generate_reply(history, extracted, knowledge)
-        saved = upsert_lead(db, conversation_id, extracted)
-        add_message(db, conversation_id, "assistant", reply)
-        captured = {field: saved[field] for field in FIELDS if saved[field]}
-        return jsonify(conversation_id=conversation_id, reply=reply, captured=captured, status=saved["status"])
+    request_id = data.get('request_id')
+    if request_id is not None and (not isinstance(request_id,str) or not re.fullmatch(r'[a-f0-9-]{36}',request_id,re.I)):
+        return jsonify(error='Invalid request identity.'),400
+    from .security import visitor_hash
+    from .workflow import chat_turn, ChatError
+    try:
+        result, status = chat_turn(message.strip(),data.get('conversation_id'),request_id,visitor_hash())
+        return jsonify(result),status
+    except ChatError as error:
+        return jsonify(error=error.message),error.status
+    except Exception as error:
+        current_app.logger.error('chat_storage_failure category=%s',type(error).__name__)
+        return jsonify(error='We could not complete that response. Please retry your message.'),503
+
+
+@bp.get('/api/chat/session')
+def chat_session():
+    from .security import visitor_hash
+    visitor_hash()
+    response=jsonify(ready=True)
+    response.headers['Cache-Control']='no-store'
+    return response
 
 @bp.get("/api/conversations/<conversation_id>")
 def conversation_history(conversation_id):
     if not re.fullmatch(r"[a-f0-9-]{36}", conversation_id, re.I):
         return jsonify(error="Invalid conversation."), 400
     with connect(current_app.config["DATABASE_PATH"]) as db:
-        exists = db.execute("SELECT 1 FROM conversations WHERE id=?", (conversation_id,)).fetchone()
+        from .security import visitor_hash
+        exists = db.execute("SELECT 1 FROM conversations WHERE id=? AND owner_hash=?", (conversation_id,visitor_hash())).fetchone()
         if not exists: return jsonify(error="Conversation not found."), 404
-        rows = db.execute("SELECT role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
-    return jsonify(conversation_id=conversation_id,messages=[dict(row) for row in rows])
+        rows = db.execute("SELECT id,role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
+    response=jsonify(conversation_id=conversation_id,messages=[dict(row) for row in rows])
+    response.headers['Cache-Control']='no-store'
+    return response
 
 @bp.get("/admin")
 @admin_required
@@ -127,7 +139,7 @@ def lead_detail(lead_id):
     with connect(current_app.config["DATABASE_PATH"]) as db:
         lead = db.execute("SELECT * FROM leads WHERE id=?", (lead_id,)).fetchone()
         if not lead: return "Lead not found", 404
-        messages = db.execute("SELECT role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (lead["conversation_id"],)).fetchall()
+        messages = db.execute("SELECT id,role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (lead["conversation_id"],)).fetchall()
     return render_template("lead.html", lead=lead, messages=messages, statuses=STATUSES, csrf_token=csrf_token)
 
 @bp.post("/admin/leads/<int:lead_id>/status")

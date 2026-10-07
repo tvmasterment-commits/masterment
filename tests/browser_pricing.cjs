@@ -32,7 +32,8 @@ const assert = require('node:assert/strict');
       // Avoid downloading portfolio media in the test; count attempts separately.
       let mediaRequests = 0;
       await page.route('**/static/videos/**', route => {mediaRequests++; return route.abort();});
-      await page.goto('http://127.0.0.1:5057/', {waitUntil: 'networkidle'});
+      await page.goto('http://127.0.0.1:5057/', {waitUntil: 'domcontentloaded'});
+      await page.waitForFunction(() => document.querySelector('.pricing-trigger') && document.querySelector('#chat-input'));
       const chatBefore = await page.locator('.chat-toggle').boundingBox();
       await page.locator('#services').scrollIntoViewIfNeeded();
       const heading = await page.locator('#services-title').boundingBox();

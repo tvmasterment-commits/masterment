@@ -64,7 +64,7 @@ class AssetTest(unittest.TestCase):
     def test_deferred_media_paths_exist_with_exact_case(self):
         page = self.client.get('/').get_data(as_text=True)
         urls = re.findall(r'data-(?:src|poster|partner-src)="/static/([^?]+)', page)
-        self.assertEqual(len(urls), 34)
+        self.assertEqual(len(urls), 45)
         for filename in urls:
             path = Path(self.app.static_folder) / filename
             self.assertIn(path.name, [p.name for p in path.parent.iterdir()])

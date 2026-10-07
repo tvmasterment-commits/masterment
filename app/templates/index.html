@@ -63,16 +63,18 @@
         <div class="reels-gallery" aria-label="Reels 1?3">
           {% for number in range(1, 4) %}
           <div class="reels-frame">
-            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
+            <img class="portfolio-poster" data-src="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" width="540" height="960" alt="" aria-hidden="true" decoding="async">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename=('videos/portfolio-web/reels-' if number in [1, 2, 3, 5, 9] else 'videos/reels/reels-') ~ number ~ '.mp4') }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
         </div>
         <article class="portfolio-card portfolio-memories reveal">
           <div class="portfolio-art art-one">
-            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/work-01.webp') }}" muted loop playsinline preload="none" aria-label="BALA — Giiio, Priest, Ashley, Raff Luke">
-              <source data-src="{{ url_for('static', filename='videos/work/work-01.mp4') }}" type="video/mp4">
+            <img class="portfolio-poster" data-src="{{ url_for('static', filename='images/posters/portfolio/work-01.webp') }}" width="1280" height="720" alt="" aria-hidden="true" decoding="async">
+            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/portfolio/work-01.webp') }}" muted loop playsinline preload="none" aria-label="BALA — Giiio, Priest, Ashley, Raff Luke">
+              <source data-src="{{ url_for('static', filename='videos/portfolio-web/work-01.mp4') }}" type="video/mp4">
               Your browser does not support HTML5 video.
             </video>
             <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>
@@ -81,8 +83,9 @@
         <div class="reels-gallery" aria-label="Reels 4?6">
           {% for number in range(4, 7) %}
           <div class="reels-frame">
-            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
+            <img class="portfolio-poster" data-src="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" width="540" height="960" alt="" aria-hidden="true" decoding="async">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename=('videos/portfolio-web/reels-' if number in [1, 2, 3, 5, 9] else 'videos/reels/reels-') ~ number ~ '.mp4') }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
@@ -90,16 +93,18 @@
         <div class="reels-gallery" aria-label="Reels 7?9">
           {% for number in range(7, 10) %}
           <div class="reels-frame">
-            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
-              <source data-src="{{ url_for('static', filename='videos/reels/reels-' ~ number ~ ('.MP4' if number in [1, 2, 3, 5, 9] else '.mp4')) }}" type="video/mp4">
+            <img class="portfolio-poster" data-src="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" width="540" height="960" alt="" aria-hidden="true" decoding="async">
+            <video class="reels-video" muted loop playsinline preload="none" data-poster="{{ url_for('static', filename='images/posters/portfolio/reels-' ~ number ~ '.webp') }}" aria-label="Masterment Reel {{ number }}">
+              <source data-src="{{ url_for('static', filename=('videos/portfolio-web/reels-' if number in [1, 2, 3, 5, 9] else 'videos/reels/reels-') ~ number ~ '.mp4') }}" type="video/mp4">
             </video>
           </div>
           {% endfor %}
         </div>
         <article class="portfolio-card portfolio-bala reveal">
           <div class="portfolio-art art-three">
-            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/work-03.webp') }}" muted loop playsinline preload="none" aria-label="MEMORIES #1 — Raff Luke, RhymesK, XA">
-              <source data-src="{{ url_for('static', filename='videos/work/work-03.mp4') }}" type="video/mp4">
+            <img class="portfolio-poster" data-src="{{ url_for('static', filename='images/posters/portfolio/work-03.webp') }}" width="1280" height="720" alt="" aria-hidden="true" decoding="async">
+            <video class="project-video" data-poster="{{ url_for('static', filename='images/posters/portfolio/work-03.webp') }}" muted loop playsinline preload="none" aria-label="MEMORIES #1 — Raff Luke, RhymesK, XA">
+              <source data-src="{{ url_for('static', filename='videos/portfolio-web/work-03.mp4') }}" type="video/mp4">
               Your browser does not support HTML5 video.
             </video>
             <div class="project-video-fallback" hidden role="status">This video is currently unavailable.</div>

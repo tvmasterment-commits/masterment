@@ -172,7 +172,8 @@ def catalog_question(history, knowledge):
             )
             if answered:
                 continue
-            if not re.search(pattern, text, re.I):
+            from .conversation import repeated_or_known
+            if not re.search(pattern, text, re.I) and not repeated_or_known(question, history, {}):
                 return question
     return None
 

@@ -3,10 +3,20 @@
   const input = document.querySelector('#chat-input');
   const messages = document.querySelector('#messages');
   const typing = document.querySelector('#typing');
+  const typingText = typing.textContent;
   const sendButton = form.querySelector('button[type="submit"]');
   let conversationId = sessionStorage.getItem('masterment_conversation_id');
+  // Establish server-owned identity before concurrent first-turn/history requests.
+  const ready = fetch('/api/chat/session', {cache: 'no-store'}).then(response => {
+    if (!response.ok) throw new Error('Session unavailable');
+  });
+  let pending = null;
+  try { pending = JSON.parse(sessionStorage.getItem('masterment_pending_request')); } catch {}
 
-  function addMessage(role, text) {
+  const displayedMessages = new Set();
+  function addMessage(role, text, id) {
+    if (id && displayedMessages.has(id)) return;
+    if (id) displayedMessages.add(id);
     const article = document.createElement('article');
     article.className = `message ${role}`;
     const bubble = document.createElement('div');
@@ -17,16 +27,23 @@
     messages.scrollTop = messages.scrollHeight;
   }
 
+  let historyReady = ready;
   if (conversationId) {
-    fetch(`/api/conversations/${encodeURIComponent(conversationId)}`)
-      .then((response) => response.ok ? response.json() : null)
+    historyReady = ready.then(() => fetch(`/api/conversations/${encodeURIComponent(conversationId)}`, {cache: 'no-store'}))
+      .then((response) => {
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error('History unavailable');
+        return response.json();
+      })
       .then((data) => {
         if (!data) {
           sessionStorage.removeItem('masterment_conversation_id');
           conversationId = null;
+          pending = null;
+          sessionStorage.removeItem('masterment_pending_request');
           return;
         }
-        for (const item of data.messages) addMessage(item.role, item.content);
+        for (const item of data.messages) addMessage(item.role, item.content, item.id);
       })
       .catch(() => {});
   }
@@ -43,28 +60,50 @@
     event.preventDefault();
     const text = input.value.trim();
     if (!text || input.disabled) return;
-    addMessage('user', text);
+    input.disabled = true;
+    sendButton.disabled = true;
+    await historyReady;
+    const retry = pending && pending.message === text;
+    if (!retry) {
+      pending = {message: text, conversation_id: conversationId, request_id: crypto.randomUUID()};
+      sessionStorage.setItem('masterment_pending_request', JSON.stringify(pending));
+      addMessage('user', text);
+    }
     input.value = '';
     input.style.height = 'auto';
     input.disabled = true;
     sendButton.disabled = true;
     form.classList.add('is-sending');
+    typing.textContent = typingText;
     typing.classList.add('visible');
+    let failed = false;
     try {
-      const response = await fetch('/api/chat', {
+      await ready;
+      const send = () => fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: text, conversation_id: conversationId})
+        body: JSON.stringify(pending)
       });
-      const data = await response.json();
+      let response = await send();
+      let data = await response.json();
+      for (let attempt = 0; response.status === 202 && attempt < 30; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        response = await send();
+        data = await response.json();
+      }
+      if (response.status === 202) throw new Error('Still processing');
       if (!response.ok) throw new Error(data.error || 'Please try again.');
       conversationId = data.conversation_id;
       sessionStorage.setItem('masterment_conversation_id', conversationId);
-      addMessage('assistant', data.reply);
+      if (!data.stale) addMessage('assistant', data.reply, data.assistant_message_id);
+      pending = null;
+      sessionStorage.removeItem('masterment_pending_request');
     } catch (error) {
-      addMessage('assistant', 'We couldn’t send that just now. Please try again in a moment.');
+      input.value = text;
+      failed = true;
+      typing.textContent = 'We couldn’t send that just now. Please try again in a moment.';
     } finally {
-      typing.classList.remove('visible');
+      if (!failed) typing.classList.remove('visible');
       input.disabled = false;
       sendButton.disabled = false;
       form.classList.remove('is-sending');

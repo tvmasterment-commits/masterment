@@ -31,11 +31,15 @@ def create_app(test_config=None):
         ADMIN_PASSWORD=admin_password,
         CHAT_RATE_LIMIT=20,
         CHAT_RATE_WINDOW=60,
+        AUTO_MIGRATE=not production,
     )
     if test_config:
         app.config.update(test_config)
     Path(app.config["DATABASE_PATH"]).parent.mkdir(parents=True, exist_ok=True)
     init_db(app.config["DATABASE_PATH"])
+    if app.config['AUTO_MIGRATE']:
+        from .migrations import migrate
+        migrate(app.config['DATABASE_PATH'])
     from .routes import bp
     app.register_blueprint(bp)
     from .assets import configure_assets
