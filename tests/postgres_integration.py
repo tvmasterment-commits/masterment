@@ -1,4 +1,4 @@
-"""Opt-in real PostgreSQL tests. Only a loopback test database is accepted.
+﻿"""Opt-in real PostgreSQL tests. Only a loopback test database is accepted.
 
 POSTGRES_TEST_URL must point at an existing disposable local database.
 Run: python tests/postgres_integration.py
@@ -30,7 +30,7 @@ class RealPostgres(unittest.TestCase):
         with psycopg.connect(original) as db:
             db.execute(sql.SQL('CREATE SCHEMA {}').format(sql.Identifier(cls.schema)))
         query = dict(parse_qsl(parsed.query))
-        query['options'] = '-c search_path=' + cls.schema
+        query['options'] = '-csearch_path=' + cls.schema
         cls.target = urlunparse(parsed._replace(query=urlencode(query)))
         try:
             migrate(cls.target)
