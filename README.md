@@ -2,6 +2,8 @@
 
 Flask and SQLite lead qualification for Masterment creative production. It includes a branded chat page, deterministic structured extraction, a model-led conversational response when `OPENAI_API_KEY` is set, a no-key fallback, and a protected admin dashboard.
 
+SEO audit, metadata configuration and manual deployment instructions are in [SEO_REPORT.md](SEO_REPORT.md). Optional `GOOGLE_SITE_VERIFICATION` must use the exact token supplied by Google Search Console.
+
 ## Local development (Windows PowerShell)
 
 From the project directory:

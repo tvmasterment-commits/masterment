@@ -4,8 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090a0b">
-  <meta name="description" content="Masterment is a creative production company working across music, film, photography, events, culture and visual identity.">
-  <title>MASTERMENT | Creative Production</title>
+  <title>{{ seo.title }}</title>
+  <meta name="description" content="{{ seo.description }}">
+  <link rel="canonical" href="{{ seo.canonical }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Masterment LLC">
+  <meta property="og:title" content="{{ seo.title }}">
+  <meta property="og:description" content="{{ seo.description }}">
+  <meta property="og:url" content="{{ seo.canonical }}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="{{ seo.image }}">
+  <meta property="og:image:alt" content="Masterment creative production showreel">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo.title }}">
+  <meta name="twitter:description" content="{{ seo.description }}">
+  <meta name="twitter:image" content="{{ seo.image }}">
+  {% if seo.verification %}<meta name="google-site-verification" content="{{ seo.verification }}">{% endif %}
+  <script type="application/ld+json">{{ seo.organization | tojson }}</script>
   <link rel="preload" as="image" fetchpriority="high" href="{{ url_for('static', filename='images/masterment-logo-336.webp') }}">
   <link rel="preload" as="image" fetchpriority="high" href="{{ url_for('static', filename='images/posters/hero.webp') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='customer.css', v='performance') }}">
@@ -57,7 +72,7 @@
     <section class="work-section section-shell" id="work" aria-labelledby="work-title">
       <div class="section-heading reveal">
         <div><p class="eyebrow">SELECTED WORK</p><h2 id="work-title">MADE TO BE <em>SEEN.</em></h2></div>
-        <p>A selection of Masterment creative agency.</p>
+        <p>Masterment LLC: video production in Massachusetts and Rhode Island, photography and music video production. Creative agency services for Boston artists and businesses.</p>
       </div>
       <div class="portfolio-grid">
         <div class="reels-gallery" aria-label="Reels 1?3">

@@ -33,6 +33,7 @@ def create_app(test_config=None):
         CHAT_RATE_LIMIT=20,
         CHAT_RATE_WINDOW=60,
         AUTO_MIGRATE=not production,
+        GOOGLE_SITE_VERIFICATION=os.getenv('GOOGLE_SITE_VERIFICATION', '').strip(),
     )
     if test_config:
         app.config.update(test_config)
@@ -48,6 +49,8 @@ def create_app(test_config=None):
         validate_schema(target)
     from .routes import bp
     app.register_blueprint(bp)
+    from .seo import bp as seo_bp
+    app.register_blueprint(seo_bp)
     from .assets import configure_assets
     configure_assets(app)
     return app
