@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 import unittest
 import uuid
+from types import SimpleNamespace
 from unittest.mock import patch
 
 import test_app
@@ -18,6 +19,22 @@ from app.migrations import validate_schema
 class MastermentImplementation(unittest.TestCase):
     setUp = test_app.AppTest.setUp
     tearDown = test_app.AppTest.tearDown
+
+    def test_responses_incomplete_refusal_and_empty_output_use_fallback(self):
+        knowledge = read_knowledge(self.app.config['KNOWLEDGE_PATH'])
+        history = [{'id': 1, 'role': 'user', 'content': 'I need photography.'}]
+        from ai_fixtures import understanding
+        valid = json.dumps(understanding('What location do you have in mind?'))
+        cases = [
+            SimpleNamespace(status='incomplete', output=[], output_text=valid),
+            SimpleNamespace(status='completed', output=[SimpleNamespace(content=[SimpleNamespace(type='refusal')])], output_text=valid),
+            SimpleNamespace(status='completed', output=[], output_text=''),
+        ]
+        for response in cases:
+            with self.subTest(status=response.status), patch.dict('os.environ', {'OPENAI_API_KEY': 'test-only'}), patch('app.assistant.OpenAI') as provider:
+                provider.return_value.responses.create.return_value = response
+                with self.assertLogs('app.assistant', level='WARNING'):
+                    self.assertIsNone(model_understanding(history, {}, knowledge))
 
     def turn(self, message, cid=None):
         response = self.client.post('/api/chat', json={'message': message, 'conversation_id': cid})
@@ -105,13 +122,15 @@ class MastermentImplementation(unittest.TestCase):
         knowledge = read_knowledge(Path(__file__).resolve().parents[1] / 'knowledge/business.json')
         history = [{'id': 1, 'role': 'user', 'content': 'Quero um vídeo musical.'}]
         with patch.dict('os.environ', {'OPENAI_API_KEY': 'test-only'}), patch('app.assistant.OpenAI') as provider:
-            provider.return_value.chat.completions.create.side_effect = TimeoutError('test')
+            provider.return_value.responses.create.side_effect = TimeoutError('test')
             with self.assertLogs('app.assistant', level='WARNING'):
                 self.assertIsNone(model_understanding(history, {}, knowledge))
-            kwargs = provider.return_value.chat.completions.create.call_args.kwargs
+            kwargs = provider.return_value.responses.create.call_args.kwargs
         self.assertFalse(kwargs['store'])
-        self.assertLessEqual(kwargs['max_completion_tokens'], 1600)
-        self.assertIn('English or Portuguese', kwargs['messages'][0]['content'])
-        self.assertIn('verified_portfolio_examples', kwargs['messages'][0]['content'])
-        self.assertIn('Massachusetts and Rhode Island', kwargs['messages'][0]['content'])
-        self.assertNotIn('test-only', json.dumps(kwargs['messages']))
+        self.assertTrue(kwargs['text']['format']['strict'])
+        self.assertEqual(kwargs['text']['format']['type'], 'json_schema')
+        self.assertLessEqual(kwargs['max_output_tokens'], 1600)
+        self.assertIn('English or Portuguese', kwargs['input'][0]['content'])
+        self.assertIn('verified_portfolio_examples', kwargs['input'][0]['content'])
+        self.assertIn('Massachusetts and Rhode Island', kwargs['input'][0]['content'])
+        self.assertNotIn('test-only', json.dumps(kwargs['input']))

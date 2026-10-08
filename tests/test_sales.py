@@ -103,13 +103,13 @@ class SalesTest(unittest.TestCase):
         calls = []
         def create(**kwargs):
             calls.append(kwargs)
-            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding("The team can review your existing site and desired bot features.", kwargs))))])
-        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+            return SimpleNamespace(status="completed", output=[], output_text=json.dumps(understanding("The team can review your existing site and desired bot features.", kwargs)))
+        client = SimpleNamespace(responses=SimpleNamespace(create=create))
         history = [{"role": "user", "content": "I already have a website and want a bot"}]
         lead = extract_from_history(history, self.knowledge)
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test"}), patch("app.assistant.OpenAI", return_value=client):
             reply = generate_reply(history, lead, self.knowledge)
-        prompt = calls[0]["messages"][0]["content"]
+        prompt = calls[0]["input"][0]["content"]
         for text in ("$149/month", "creative network", "Do NOT invent", "already have a website", "digital solutions"):
             self.assertIn(text, prompt)
         self.assertNotIn("$650/month", prompt)
@@ -117,7 +117,7 @@ class SalesTest(unittest.TestCase):
 
     def test_unapproved_model_price_discount_and_guarantee_are_replaced(self):
         for bad in ("A single Reel is $99.", "We guarantee viral results.", "You get a 25% discount.", "Our AI usage is unlimited."):
-            client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs: SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding(bad, kwargs))))]))))
+            client = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: SimpleNamespace(status="completed", output=[], output_text=json.dumps(understanding(bad, kwargs)))))
             history = [{"role": "user", "content": "How much is one Reel?"}]
             with patch.dict(os.environ, {"OPENAI_API_KEY": "test"}), patch("app.assistant.OpenAI", return_value=client):
                 reply = generate_reply(history, {}, self.knowledge)
@@ -125,7 +125,7 @@ class SalesTest(unittest.TestCase):
             self.assertIn("$250", reply)
 
     def test_starting_price_cannot_become_a_fixed_model_quote(self):
-        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs: SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding("Photography costs $250 total.", kwargs))))]))))
+        client = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs: SimpleNamespace(status="completed", output=[], output_text=json.dumps(understanding("Photography costs $250 total.", kwargs)))))
         history = [{"role": "user", "content": "How much is photography?"}]
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test"}), patch("app.assistant.OpenAI", return_value=client):
             reply = generate_reply(history, {}, self.knowledge)

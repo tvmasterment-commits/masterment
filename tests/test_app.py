@@ -14,10 +14,10 @@ def fake_openai(responses, calls=None):
     calls = calls if calls is not None else []
     queue = list(responses)
     def create(**kwargs):
-        calls.append(kwargs["messages"])
+        calls.append(kwargs["input"])
         value = queue.pop(0) if queue else responses[-1]
-        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding(value, kwargs))))])
-    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+        return SimpleNamespace(status="completed", output=[], output_text=json.dumps(understanding(value, kwargs)))
+    client = SimpleNamespace(responses=SimpleNamespace(create=create))
     return lambda **kwargs: client
 
 class AppTest(unittest.TestCase):

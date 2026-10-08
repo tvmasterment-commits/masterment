@@ -351,17 +351,19 @@ def model_understanding(history, lead, knowledge):
                      'policy':{k:knowledge['responses'][k] for k in ('discount','starting_prices','combinations','results_limits')}},ensure_ascii=False)}
     try:
         client = OpenAI(api_key=key, timeout=20.0, max_retries=0)
-        response = client.chat.completions.create(
+        response = client.responses.create(
             model=os.getenv('OPENAI_MODEL','gpt-4o-mini'), temperature=0.3,
-            max_completion_tokens=1600,
+            max_output_tokens=1600,
             store=False,
-            response_format={'type':'json_schema','json_schema':{'name':'sales_understanding','strict':True,'schema':SCHEMA}},
-            messages=[system,*recent],
+            text={'format':{'type':'json_schema','name':'sales_understanding','strict':True,'schema':SCHEMA}},
+            input=[system,*recent],
         )
-        choice=response.choices[0]
-        if getattr(choice,'finish_reason','stop') not in (None,'stop') or getattr(choice.message,'refusal',None):
+        if response.status != 'completed' or any(
+                getattr(part, 'type', None) == 'refusal'
+                for item in response.output
+                for part in getattr(item, 'content', [])):
             raise ValueError('incomplete_or_refused')
-        result=validate(json.loads(choice.message.content))
+        result=validate(json.loads(response.output_text))
         if result['confidence']<0.75:
             raise ValueError('low_confidence')
         allowed=offers(knowledge)

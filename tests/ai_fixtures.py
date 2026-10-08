@@ -3,7 +3,7 @@ import json
 
 
 def understanding(reply, kwargs=None):
-    messages=(kwargs or {}).get('messages',[])
+    messages=(kwargs or {}).get('input',[])
     last=next((m for m in reversed(messages) if m['role']=='user'),None)
     evidence=[]
     if last:

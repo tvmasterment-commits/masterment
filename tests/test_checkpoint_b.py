@@ -125,8 +125,8 @@ class CheckpointB(unittest.TestCase):
         unsupported = understanding('Hello')
         unsupported['proposed_updates'] = [{'field': 'service_id', 'value': 'spaceship', 'message_id': 1, 'quote': 'music video'}]
         for content in ['not JSON', json.dumps({'intent': 'PAID'}), json.dumps(unsupported)]:
-            client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs:
-                SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=content))]))))
+            client = SimpleNamespace(responses=SimpleNamespace(create=lambda **kwargs:
+                SimpleNamespace(status="completed", output=[], output_text=content)))
             with patch.dict(os.environ, {'OPENAI_API_KEY': 'test'}), patch('app.assistant.OpenAI', return_value=client):
                 self.assertIsNone(model_understanding(history, {}, knowledge))
 
@@ -136,11 +136,11 @@ class CheckpointB(unittest.TestCase):
         captured = []
         def create(**kwargs):
             captured.append(kwargs)
-            return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(understanding('Hello'))))])
-        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+            return SimpleNamespace(status="completed", output=[], output_text=json.dumps(understanding('Hello')))
+        client = SimpleNamespace(responses=SimpleNamespace(create=create))
         with patch.dict(os.environ, {'OPENAI_API_KEY': 'test'}), patch('app.assistant.OpenAI', return_value=client):
             self.assertIsNotNone(model_understanding(history, {'description': 'x' * 100000}, knowledge))
-        messages = captured[0]['messages']
+        messages = captured[0]['input']
         self.assertLessEqual(len(messages), 13)
         self.assertLess(sum(len(m['content']) for m in messages), 25000)
 
