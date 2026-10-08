@@ -1,7 +1,9 @@
 {
   "company_name": "Masterment LLC",
   "assistant_name": "Masterment",
-  "description": "Masterment is a creative production & digital solutions company.",
+  "description": "Masterment LLC is a creative production & digital solutions company, also working in equipment-related production services and creative label services. We create visuals, build brands, and support artists.",
+  "important_markets": ["Boston", "Brockton", "Quincy", "Taunton", "Providence"],
+  "equipment_policy": "Equipment-related production services may be discussed with the team. Equipment rental and specific equipment availability are not verified and must not be advertised.",
   "services": [
     "Music video production",
     "Video production",
@@ -41,10 +43,20 @@
     "Digital solutions",
     "International creative coordination",
     "Music production connections",
-    "Dancer/talent connections"
+    "Dancer/talent connections",
+    "Video editing",
+    "Portrait photography",
+    "Business photography",
+    "Commercial photography",
+    "Production planning",
+    "Visual storytelling",
+    "Logo and flyer design",
+    "Artist branding and support",
+    "Creative label services",
+    "Equipment-related production services"
   ],
   "business_hours": "[PLACEHOLDER: Add approved business hours]",
-  "service_area": "[PLACEHOLDER: Add approved service area]",
+  "service_area": "Massachusetts and Rhode Island",
   "contact_email": "[PLACEHOLDER: Add approved contact email]",
   "contact_phone": "[PLACEHOLDER: Add approved contact phone]",
   "booking_policy": "[PLACEHOLDER: Add approved booking, deposit, cancellation, and scheduling policies]",

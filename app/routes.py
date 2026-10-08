@@ -100,7 +100,7 @@ def chat():
     except ChatError as error:
         return jsonify(error=error.message),error.status
     except Exception as error:
-        current_app.logger.error('chat_storage_failure category=%s',type(error).__name__)
+        log_chat_failure('chat_storage_failure', error)
         return jsonify(error='We could not complete that response. Please retry your message.'),503
 
 
@@ -116,14 +116,31 @@ def chat_session():
 def conversation_history(conversation_id):
     if not re.fullmatch(r"[a-f0-9-]{36}", conversation_id, re.I):
         return jsonify(error="Invalid conversation."), 400
-    with connect(database_target(current_app.config)) as db:
-        from .security import visitor_hash
-        exists = db.execute("SELECT 1 FROM conversations WHERE id=? AND owner_hash=?", (conversation_id,visitor_hash())).fetchone()
-        if not exists: return jsonify(error="Conversation not found."), 404
-        rows = db.execute("SELECT id,role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
+    try:
+        with connect(database_target(current_app.config)) as db:
+            from .security import visitor_hash
+            exists = db.execute("SELECT 1 FROM conversations WHERE id=? AND owner_hash=?", (conversation_id,visitor_hash())).fetchone()
+            if not exists: return jsonify(error="Conversation not found."), 404
+            rows = db.execute("SELECT id,role,content,created_at FROM messages WHERE conversation_id=? ORDER BY id", (conversation_id,)).fetchall()
+    except Exception as error:
+        log_chat_failure('chat_history_failure', error)
+        response = jsonify(error='Conversation history is temporarily unavailable. Please retry.')
+        response.status_code = 503
+        response.headers['Cache-Control'] = 'no-store'
+        return response
     response=jsonify(conversation_id=conversation_id,messages=[dict(row) for row in rows])
     response.headers['Cache-Control']='no-store'
     return response
+
+
+def log_chat_failure(event, error):
+    """Only diagnostic codes: never exception text, SQL, URLs or customer data."""
+    from .db import backend
+    sqlstate = getattr(error, 'sqlstate', None)
+    if not isinstance(sqlstate, str) or not re.fullmatch(r'[A-Z0-9]{5}', sqlstate):
+        sqlstate = 'unknown'
+    current_app.logger.error('%s category=%s backend=%s sqlstate=%s', event,
+                             type(error).__name__, backend(database_target(current_app.config)), sqlstate)
 
 @bp.get("/admin")
 @admin_required

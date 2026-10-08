@@ -4,6 +4,21 @@ Flask and SQLite lead qualification for Masterment creative production. It inclu
 
 SEO audit, metadata configuration and manual deployment instructions are in [SEO_REPORT.md](SEO_REPORT.md). Optional `GOOGLE_SITE_VERIFICATION` must use the exact token supplied by Google Search Console.
 
+The comprehensive chatbot update retains the existing server-side Chat Completions integration and adds Portuguese intake/fallbacks, curated official-channel portfolio examples, Safari-compatible session recovery and abandoned-turn recovery. `knowledge/portfolio.json` records exact public titles, original URLs and their source; it does not establish Masterment production roles or artist aliases. Owner-approved Massachusetts/Rhode Island business information remains in `knowledge/business.json`. Production needs its own securely configured `OPENAI_API_KEY`; no key is sent to the browser.
+
+Read [SQLITE_REPAIR_PLAN.md](SQLITE_REPAIR_PLAN.md) before any production deployment. The current free Render service has ephemeral SQLite data and no verified backup; deploying or attaching a disk must wait for safe export and restoration. No automatic production migration or empty-database bootstrap was added. See [MASTERMENT_FINAL_IMPLEMENTATION_REPORT.md](MASTERMENT_FINAL_IMPLEMENTATION_REPORT.md) for final verification and remaining blockers.
+
+Additional local checks:
+
+```powershell
+node tests/chat_frontend.cjs
+node tests/chat_submission.cjs
+$env:PLAYWRIGHT_BROWSERS_PATH = (Join-Path (Get-Location) '.performance-verification/browsers')
+node tests/browser_masterment.cjs
+```
+
+Browser checks require development-only Playwright under `.performance-verification/node_modules`, an installed Chrome executable and Playwright WebKit. They start an isolated loopback server/database and never send production inquiries. The SQLite repair rehearsal tool accepts an actual exported source and migrates only copies; detailed commands and safety gates are in the repair plan.
+
 ## Local development (Windows PowerShell)
 
 From the project directory:

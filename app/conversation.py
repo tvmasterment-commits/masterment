@@ -17,6 +17,8 @@ def questions(text):
             if '?' in s or re.match(r'(please|could you|can you|tell me|share|provide)\b', s, re.I)]
 
 def intents(text):
+    from .language import intake_text
+    text = intake_text(text)
     return {field for field, pattern in PATTERNS.items() if re.search(pattern, text, re.I)}
 
 def repeated_or_known(reply, history, lead):

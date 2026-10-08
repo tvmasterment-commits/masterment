@@ -3,6 +3,7 @@ import hashlib
 import json
 import logging
 import uuid
+from datetime import datetime, timezone
 from flask import current_app
 from .db import connect, ensure_conversation, add_message, upsert_lead, now, database_target
 from .assistant import read_knowledge, model_understanding, render_reply
@@ -34,6 +35,32 @@ def save_intelligence(db,cid,revision,lead,updates,derived,evidence):
         log.info('sales_transition revision=%s from=%s to=%s',revision,previous,derived['sales_status'])
 
 
+def finish_turn(db,cid,request_id,revision,owner,history,lead,evidence,result,knowledge):
+    saved_request=db.execute('SELECT response_json FROM chat_requests WHERE request_id=?',(request_id,)).fetchone()
+    if saved_request['response_json']:
+        return json.loads(saved_request['response_json']),200
+    conversation=owned(db,cid,owner)
+    if conversation['revision']!=revision:
+        response={'conversation_id':cid,'request_id':request_id,'revision':revision,'stale':True,
+                  'reply':'I’ve saved your message. Your newer details take priority.'}
+        db.execute("UPDATE chat_requests SET state='stale',response_json=? WHERE request_id=?",(json.dumps(response),request_id))
+        log.info('ai_result_stale revision=%s',revision)
+        return response,200
+    updates,model_evidence=evidence_updates(result,history,lead,knowledge)
+    evidence.update(model_evidence)
+    merged={**lead,**updates}
+    derived=decision(history,merged,knowledge,result)
+    save_intelligence(db,cid,revision,lead,updates,derived,evidence)
+    reply=render_reply(history,{**merged,**derived},knowledge,result)
+    assistant_message_id=add_message(db,cid,'assistant',reply)
+    saved=db.execute('SELECT * FROM leads WHERE conversation_id=?',(cid,)).fetchone()
+    response={'conversation_id':cid,'request_id':request_id,'revision':revision,'reply':reply,'assistant_message_id':assistant_message_id,
+              'captured':{field:saved[field] for field in LEAD_FIELDS if saved[field]},'status':saved['status']}
+    db.execute("UPDATE chat_requests SET state='completed',response_json=? WHERE request_id=?",(json.dumps(response),request_id))
+    log.info('chat_turn_saved revision=%s',revision)
+    return response,200
+
+
 def chat_turn(message,cid,request_id,owner):
     path=database_target(current_app.config)
     knowledge=read_knowledge(current_app.config['KNOWLEDGE_PATH'])
@@ -48,8 +75,18 @@ def chat_turn(message,cid,request_id,owner):
             if existing['owner_hash']!=owner or existing['input_hash']!=input_hash or (cid and cid!=existing['conversation_id']):
                 raise ChatError('Request identity conflict.',409)
             if existing['response_json']:return json.loads(existing['response_json']),200
-            # A completed newer revision supersedes this pending turn. A retry never
-            # invokes the model twice or appends another message.
+            # Recover a turn abandoned by a worker crash or second-phase storage
+            # failure. The 90s grace exceeds the bounded 20s model timeout. Finish
+            # with approved fallback only; do not append another user turn or call AI.
+            age=(datetime.now(timezone.utc)-datetime.fromisoformat(existing['created_at'])).total_seconds()
+            if age>=90:
+                cid=existing['conversation_id']
+                owned(db,cid,owner)
+                history=[dict(row) for row in db.execute('SELECT id,role,content FROM messages WHERE conversation_id=? AND id<=? ORDER BY id', (cid,existing['user_message_id']))]
+                lead=dict(db.execute('SELECT * FROM leads WHERE conversation_id=?',(cid,)).fetchone())
+                log.info('chat_pending_recovered revision=%s',existing['revision'])
+                return finish_turn(db,cid,request_id,existing['revision'],owner,history,lead,
+                                   json.loads(lead.get('field_evidence') or '{}'),None,knowledge)
             return {'conversation_id':existing['conversation_id'],'request_id':request_id,'pending':True},202
         if cid:
             conversation=owned(db,cid,owner)
@@ -81,23 +118,4 @@ def chat_turn(message,cid,request_id,owner):
     result=model_understanding(history,lead,knowledge)
     with connect(path) as db:
         db.begin_write()
-        conversation=owned(db,cid,owner)
-        if conversation['revision']!=revision:
-            response={'conversation_id':cid,'request_id':request_id,'revision':revision,'stale':True,
-                      'reply':'I’ve saved your message. Your newer details take priority.'}
-            db.execute("UPDATE chat_requests SET state='stale',response_json=? WHERE request_id=?",(json.dumps(response),request_id))
-            log.info('ai_result_stale revision=%s',revision)
-            return response,200
-        updates,model_evidence=evidence_updates(result,history,lead,knowledge)
-        evidence.update(model_evidence)
-        merged={**lead,**updates}
-        derived=decision(history,merged,knowledge,result)
-        save_intelligence(db,cid,revision,lead,updates,derived,evidence)
-        reply=render_reply(history,{**merged,**derived},knowledge,result)
-        assistant_message_id=add_message(db,cid,'assistant',reply)
-        saved=db.execute('SELECT * FROM leads WHERE conversation_id=?',(cid,)).fetchone()
-        response={'conversation_id':cid,'request_id':request_id,'revision':revision,'reply':reply,'assistant_message_id':assistant_message_id,
-                  'captured':{field:saved[field] for field in LEAD_FIELDS if saved[field]},'status':saved['status']}
-        db.execute("UPDATE chat_requests SET state='completed',response_json=? WHERE request_id=?",(json.dumps(response),request_id))
-        log.info('chat_turn_saved revision=%s',revision)
-    return response,200
+        return finish_turn(db,cid,request_id,revision,owner,history,lead,evidence,result,knowledge)

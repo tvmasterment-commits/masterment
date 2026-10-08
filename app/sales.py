@@ -3,6 +3,8 @@ import re
 
 
 def match_catalog(text, knowledge):
+    from .language import intake_text
+    text = intake_text(text)
     catalog = knowledge.get("catalog", {})
     keys = [key for key, entry in catalog.items()
             if any(re.search(pattern, text, re.I) for pattern in entry["patterns"])]
@@ -161,11 +163,14 @@ def sales_answer(history, lead, knowledge):
 
 
 def catalog_question(history, knowledge):
+    from .language import localize_question, intake_text
     text = "\n".join(m["content"] for m in history if m.get("role") == "user")
+    text = intake_text(text)
     for key in conversation_catalog(history, knowledge):
         for _, pattern, question in knowledge["catalog"][key].get("questions", []):
             answered = any(
-                turn.get("role") == "assistant" and turn.get("content", "").endswith(question)
+                turn.get("role") == "assistant" and (turn.get("content", "").endswith(question)
+                                                      or turn.get("content", "").endswith(localize_question(question)))
                 and following.get("role") == "user" and following.get("content", "").strip()
                 and "?" not in following["content"]
                 for turn, following in zip(history, history[1:])

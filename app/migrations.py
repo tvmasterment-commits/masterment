@@ -70,11 +70,11 @@ def validate_schema(target):
                 raise RuntimeError('Unsupported database schema version')
             # Also fail clearly if tracked tables/columns have been removed.
             for sql in [
-                'SELECT id,owner_hash,revision FROM conversations LIMIT 0',
-                'SELECT id,sales_status,sales_intent,field_evidence,purchase_requested FROM leads LIMIT 0',
-                'SELECT id,conversation_id,role,content FROM messages LIMIT 0',
-                'SELECT request_id,owner_hash,response_json,revision FROM chat_requests LIMIT 0',
-                'SELECT id,revision,to_state FROM sales_transitions LIMIT 0']:
+                'SELECT id,owner_hash,revision,created_at,updated_at FROM conversations LIMIT 0',
+                'SELECT id,conversation_id,name,phone,email,service,project_date,location,budget,description,status,created_at,updated_at,sales_status,sales_intent,intent_confidence,service_id,package_id,conversation_summary,next_action,field_evidence,missing_fields,purchase_requested,legacy_review_required FROM leads LIMIT 0',
+                'SELECT id,conversation_id,role,content,created_at FROM messages LIMIT 0',
+                'SELECT request_id,conversation_id,owner_hash,input_hash,revision,user_message_id,state,response_json,created_at FROM chat_requests LIMIT 0',
+                'SELECT id,conversation_id,revision,from_state,to_state,intent,created_at FROM sales_transitions LIMIT 0']:
                 db.execute(sql)
     except Exception:
         # Do not expose connection strings or credentials through startup errors.

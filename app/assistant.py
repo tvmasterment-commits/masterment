@@ -29,7 +29,10 @@ UNKNOWN_DATE_RE = re.compile(r"\b(?:i\s+)?(?:don't|do not|haven't|have not)\s+(?
 
 def read_knowledge(path):
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        knowledge = json.load(f)
+    from .portfolio import read_portfolio
+    knowledge['portfolio'] = read_portfolio()
+    return knowledge
 
 def _extract_date(text):
     matches = [re.sub(r"\s+", " ", m.group(0)).strip(" .,!?;") for m in DATE_RE.finditer(text)]
@@ -128,6 +131,8 @@ def _extract_description(text, history=None):
 
 def extract_from_history(history, knowledge=None):
     """Deterministically recover explicit lead details from every visitor turn."""
+    from .language import intake_text
+    history = [{**m, 'content': intake_text(m.get('content', ''))} for m in history]
     users = [m.get("content", "") for m in history if m.get("role") == "user"]
     combined = "\n".join(users)
     fields = {}
@@ -196,6 +201,8 @@ def _question_about_price(text):
 
 def _followup(history, lead, knowledge):
     from .conversation import repeated_or_known
+    from .language import language, localize_question
+    pt = language(history) == 'pt'
     last = next((m["content"] for m in reversed(history) if m.get("role") == "user"), "")
     if _question_about_price(last) and "PLACEHOLDER" in knowledge.get("pricing", ""):
         prefix = "Pricing depends on the concept and production needs, and I don’t have approved rates to quote here. "
@@ -224,8 +231,9 @@ def _followup(history, lead, knowledge):
         candidates.append("What name should I include with the project brief?")
     for question in candidates:
         if question and not repeated_or_known(question, history, lead):
-            return prefix + question
-    return prefix + "The Masterment team can review the details you shared. You can add anything else whenever you are ready; no booking or availability is confirmed here."
+            return (localize_question(question) if pt else prefix + question)
+    closing = "The Masterment team can review the details you shared. You can add anything else whenever you are ready; no booking or availability is confirmed here."
+    return localize_question(closing) if pt else prefix + closing
 
 def _has_repeated_field_question(reply, lead):
     checks = {
@@ -270,13 +278,32 @@ def _has_generic_service_opening(reply):
     return bool(re.search(r"^\s*(?:thank you for reaching out|we(?:'re| are) excited to hear|it's great to learn more|we appreciate you sharing)", reply, re.I))
 
 def fallback_reply(history, lead, knowledge):
+    from .language import language
+    if language(history) == 'pt':
+        return portuguese_fallback(history, lead, knowledge)
     answer = sales_answer(history, lead, knowledge)
     return " ".join(part for part in (answer, _followup(history, lead, knowledge)) if part)
+
+
+def portuguese_fallback(history, lead, knowledge):
+    import re
+    from .language import intake_text
+    last = history[-1]['content']
+    if re.search(r'preço|quanto|custa|orçamento|price|cost', last, re.I):
+        normalized = [{**turn, 'content': intake_text(turn['content'])} for turn in history]
+        # The same approved pricing source remains authoritative in both languages.
+        normalized[-1]['content'] = 'How much? ' + normalized[-1]['content']
+        answer = sales_answer(normalized, lead, knowledge)
+        for source, target in [('Starting at', 'A partir de'), ('Starting prices', 'Preços iniciais'), ('setup', 'configuração'), ('/month', '/mês')]:
+            answer = re.sub(re.escape(source), target, answer, flags=re.I)
+        return 'Valores aprovados (alguns nomes de serviços estão em inglês): ' + answer + ' ' + _followup(history, lead, knowledge)
+    return 'A Masterment trabalha com produção criativa, fotografia, vídeos e soluções digitais. ' + _followup(history, lead, knowledge)
 
 def model_understanding(history, lead, knowledge):
     """One bounded, read-only model proposal. All writes belong to workflow.py."""
     import logging
     from .ai_schema import SCHEMA, validate
+    from .portfolio import examples
     key = os.getenv("OPENAI_API_KEY", "").strip()
     if not key:
         return None
@@ -305,6 +332,7 @@ def model_understanding(history, lead, knowledge):
     system = {'role':'system','content':
         f"You are {knowledge['assistant_name']}, a professional, natural and concise representative of {knowledge['company_name']}. "
         "Understand creative production and digital solutions inquiries using the validated state and recent messages. "
+        "Reply in the customer's language: English or Portuguese. For Cape Verdean Creole, offer Portuguese or English when uncertain; do not claim fluency. "
         "Return the strict sales understanding schema. Proposed updates must cite an exact quote and customer message_id from the newest user message. "
         "A missing value is not a deletion. Respect explicit corrections. Names, phones, email, dates, budgets and locations require evidence. "
         "Use only supplied service/package IDs. Ask at most one genuinely useful question, never ask for a known fact or a second contact method. "
@@ -317,12 +345,16 @@ def model_understanding(history, lead, knowledge):
         "Do not sell a new website to someone who already has a website and only needs a bot. Do not request payment credentials. "
         "Internal classifications must never appear in the customer reply. Use CUSTOM QUOTE when approved information is insufficient. "
         + json.dumps({'validated_lead':state,'catalog':catalog,'offer_ids':catalog_ids,'approved_business_information':approved,
+                     'business_identity': {k:knowledge.get(k) for k in ('company_name','description','service_area','important_markets','equipment_policy')},
+                     'portfolio_policy': knowledge.get('portfolio',{}).get('policy'),
+                     'verified_portfolio_examples': examples(history[-1]['content'],knowledge,lead.get('service_id')),
                      'policy':{k:knowledge['responses'][k] for k in ('discount','starting_prices','combinations','results_limits')}},ensure_ascii=False)}
     try:
         client = OpenAI(api_key=key, timeout=20.0, max_retries=0)
         response = client.chat.completions.create(
             model=os.getenv('OPENAI_MODEL','gpt-4o-mini'), temperature=0.3,
             max_completion_tokens=1600,
+            store=False,
             response_format={'type':'json_schema','json_schema':{'name':'sales_understanding','strict':True,'schema':SCHEMA}},
             messages=[system,*recent],
         )
@@ -347,16 +379,26 @@ def model_understanding(history, lead, knowledge):
 
 
 def render_reply(history, lead, knowledge, result=None):
+    if re.search(r'\b(?:kriolu|kriolo|crioulo|creole)\b', history[-1]['content'], re.I):
+        return 'I can help reliably in English or Portuguese. Prefere continuar em português?'
+    from .portfolio import portfolio_reply
+    public_examples = portfolio_reply(history, lead, knowledge)
+    if public_examples:
+        return public_examples
     from .intelligence import decision, safe_special_reply
     from .ai_schema import INTENTS
     special=safe_special_reply(history,lead,decision(history,lead,knowledge,result))
+    from .language import language
+    if special and language(history) == 'pt':
+        return ('Registei o seu pedido para análise da equipa da Masterment. Nenhuma reserva, disponibilidade, pagamento ou contrato está confirmado. '
+                + ('' if lead.get('email') or lead.get('phone') else 'Qual é o melhor telefone ou email para a equipa entrar em contacto?'))
     from .conversation import repeated_or_known
     if special:
         if repeated_or_known(special, history, lead):
             return fallback_reply(history, lead, knowledge)
         return special
     reply = result['reply'].strip() if result else ''
-    unsafe = bool(re.search(r"https?://|\b(?:paid|payment|deposit|refund|signed|signature|contract|booked|booking|available|availability|confirmed|confirm|reserved|reservation|discount|percent)\b|%|\b(?:call|contact|email|text)(?:ed|ing) you\b", reply, re.I))
+    unsafe = bool(re.search(r"https?://|\b(?:paid|payment|deposit|refund|signed|signature|contract|booked|booking|available|availability|confirmed|confirm|reserved|reservation|discount|percent|reservad[oa]|confirmad[oa]|disponível|pagamento|desconto|contrato)\b|%|\b(?:call|contact|email|text)(?:ed|ing) you\b", reply, re.I))
     if not reply or unsafe or any(intent in reply for intent in INTENTS) or unsupported_sales_claim(reply,history,knowledge) or _reply_has_known_field_request(reply,lead) or _has_generic_service_opening(reply) or repeated_or_known(reply, history, lead):
         return fallback_reply(history, lead, knowledge)
     return reply
